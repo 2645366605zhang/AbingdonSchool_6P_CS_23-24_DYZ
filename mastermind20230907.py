@@ -1,18 +1,57 @@
 import math
 import random
+import os
 
-legacyScore = [["Hive", 116], ["KevinL", 110], ["BRL", 88], ["ZC", 72], ["LeoW", 69], ["DndT", 60]] #Score will be (100-tries)*difficulty(0.75 for easy, 1 for normal, 1.2 for hard) rounded down to an integer
+localDirection = os.path.dirname(__file__)
+relativeDirection = "txtfile/mastermind/scoreboard.txt"
+scoreboardDirection = os.path.join(localDirection, relativeDirection)
+
+legacyScore = [] #Score will be (100-tries)*difficulty(0.75 for easy, 1 for normal, 1.2 for hard) rounded down to an integer
 debugMode = False
+
+def readScoreboard(scoreboard):
+    scoreboardFile = open(scoreboardDirection, "r")
+    for line in scoreboardFile:
+        dataList = line.split("|")
+        name = dataList[0]
+        score = int(dataList[1])
+        scoreboard.append([name, score])
+    scoreboardFile.close()
+    return scoreboard
+
+def writeScoreboard():
+    scoreboardFile = open(scoreboardDirection, "w")
+    for record in legacyScore:
+        scoreboardFile.write(record[0])
+        scoreboardFile.write("|")
+        scoreboardFile.write(str(record[1]))
+        scoreboardFile.write("\n")
+    scoreboardFile.close()
+
+def orderScoreboard(scoreboard):
+    scoreboardLength = len(scoreboard)
+    for i in range(scoreboardLength):
+        scoreSorted = True
+        for j in range(scoreboardLength - i - 1):
+            if scoreboard[j][1] < scoreboard[j + 1][1]:
+                scoreboard[j], scoreboard[j + 1] = scoreboard[j + 1], scoreboard[j]
+                scoreSorted = False
+        if scoreSorted:
+            break
+    return scoreboard
 
 def menu():
     global debugMode
+    global legacyScore
     programOn = True
+    legacyScore = orderScoreboard(readScoreboard(legacyScore))
     while programOn:
         print("""
             M A S T E R M I N D            
             1.     START
             2.   SCOREBOARD
-            3.      END
+            3.  EXPORT SCORE
+            4.      END
         """)
         try:
             menuChoice = int(input("\nPlease enter the number before your choice."))
@@ -21,6 +60,8 @@ def menu():
             elif menuChoice == 2:
                 displayScore()
             elif menuChoice == 3:
+                writeScoreboard()
+            elif menuChoice == 4:
                 programOn = False
             elif menuChoice == 114514:
                 if debugMode:
@@ -147,6 +188,7 @@ def gameStart():
                 print("Not a number, please try again.")
     if numberGuessed:
         recordIndex = 0
+        incompatibleCharacter = True
         validName = False
         if difficulty == "H":
             playerScore = math.floor((100 - playerTries) * 1.2)
@@ -155,17 +197,19 @@ def gameStart():
         else:
             playerScore = math.floor((100 - playerTries) * 0.75)
         print(f"\nYou win!\n Your score: {playerScore}")
-        while not(validName):
+        while not(validName) or incompatibleCharacter:
+            incompatibleCharacter = False
             playerName = input("\nPlease enter your name(Maximum 6 characters).")
             if len(playerName) <= 6:
                 validName = True
-        playerRecord = [playerName, playerScore]
-        for record in legacyScore:
-            if record[1] <= playerScore:
-                legacyScore.insert(recordIndex, playerRecord)
-                break
             else:
-                recordIndex += 1
+                validName = False
+            for character in playerName:
+                if character == "|":
+                    incompatibleCharacter = True
+        playerRecord = [playerName, playerScore]
+        legacyScore.append(playerRecord)
+        legacyScore = orderScoreboard(legacyScore)
         displayScore()
     else:
         print("Unknown error, you shouldn't see this in a normal game.")
