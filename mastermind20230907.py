@@ -187,7 +187,6 @@ def gameStart():
             except ValueError:
                 print("Not a number, please try again.")
     if numberGuessed:
-        incompatibleCharacter = True
         validName = False
         if difficulty == "H":
             playerScore = math.floor((100 - playerTries) * 1.2)
