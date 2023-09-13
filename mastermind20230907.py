@@ -10,23 +10,28 @@ legacyScore = [] #Score will be (100-tries)*difficulty(0.75 for easy, 1 for norm
 debugMode = False
 
 def readScoreboard(scoreboard):
-    scoreboardFile = open(scoreboardDirection, "r")
-    for line in scoreboardFile:
-        dataList = line.split("|")
-        name = dataList[0]
-        score = int(dataList[1])
-        scoreboard.append([name, score])
-    scoreboardFile.close()
+    try:
+        scoreboardFile = open(scoreboardDirection, "r")
+        for line in scoreboardFile:
+            dataList = line.split("|")
+            name = dataList[0]
+            score = int(dataList[1])
+            scoreboard.append([name, score])
+        scoreboardFile.close()
+    except FileNotFoundError:
+        print("\nscoreboard.txt not found, creating a new file.\n")
+        scoreboard = []
     return scoreboard
 
 def writeScoreboard():
-    scoreboardFile = open(scoreboardDirection, "w")
+    scoreboardFile = open(scoreboardDirection, "w+")
     for record in legacyScore:
         scoreboardFile.write(record[0])
         scoreboardFile.write("|")
         scoreboardFile.write(str(record[1]))
         scoreboardFile.write("\n")
     scoreboardFile.close()
+    print("Scoreboard successfully exported!")
 
 def orderScoreboard(scoreboard):
     scoreboardLength = len(scoreboard)
@@ -198,7 +203,7 @@ def gameStart():
         while not(validName) or incompatibleCharacter:
             incompatibleCharacter = False
             playerName = input("\nPlease enter your name(Maximum 6 characters).")
-            if len(playerName) <= 6:
+            if len(playerName) <= 6 and playerName != "":
                 validName = True
             else:
                 validName = False
