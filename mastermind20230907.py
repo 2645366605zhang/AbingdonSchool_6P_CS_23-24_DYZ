@@ -19,7 +19,7 @@ def readScoreboard(scoreboard):
             scoreboard.append([name, score])
         scoreboardFile.close()
     except FileNotFoundError:
-        print("\nscoreboard.txt not found, creating a new file.\n")
+        print("\nscoreboard.txt not found, generating a new file.\n")
         scoreboard = []
     return scoreboard
 
@@ -83,7 +83,7 @@ def menu():
     
 def displayScore():
     rank = 0
-    print("SCOREBOARD")
+    print("\n----------------\n   SCOREBOARD\n----------------")
     for record in legacyScore:
         rank += 1
         recordName = record[0]
