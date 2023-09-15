@@ -59,7 +59,7 @@ def menu():
             4.      END
         """)
         try:
-            menuChoice = int(input("\nPlease enter the number before your choice."))
+            menuChoice = int(input("\nPlease enter the number of your choice."))
             if menuChoice == 1:
                 gameStart()
             elif menuChoice == 2:
