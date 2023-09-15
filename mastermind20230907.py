@@ -24,7 +24,7 @@ def readScoreboard(scoreboard):
     return scoreboard
 
 def writeScoreboard():
-    scoreboardFile = open(scoreboardDirection, "w+")
+    scoreboardFile = open(scoreboardDirection, "w")
     for record in legacyScore:
         scoreboardFile.write(record[0])
         scoreboardFile.write("|")
