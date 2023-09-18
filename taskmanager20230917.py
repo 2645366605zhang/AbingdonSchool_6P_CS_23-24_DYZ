@@ -139,7 +139,7 @@ def importTask(taskList):
             taskIndex += 1
         taskFile.close()
     except FileNotFoundError:
-        print("\nscoreboard.txt not found, generating a new file.\n")
+        print("\ntask_list.txt not found, generating a new file.\n")
         taskList = []
     return taskList
 
