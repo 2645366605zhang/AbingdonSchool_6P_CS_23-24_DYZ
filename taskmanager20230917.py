@@ -116,11 +116,11 @@ def completeTask():
     else:
         completeConfirmation = input('This will mark the current task as completed!\nEnter "No" to cancel, press enter to continue.')
         if completeConfirmation.upper() == "NO":
+            print("Operation cancelled!")
+        else:
             tasks[currentTask[0]][2] = "✓"
             currentTask = checkCurrentTask()
             print(f"Task {tasks[currentTask[0]][1]} is marked as completed!")
-        else:
-            print("Operation cancelled!")
 
 def importTask(taskList):
     try:
