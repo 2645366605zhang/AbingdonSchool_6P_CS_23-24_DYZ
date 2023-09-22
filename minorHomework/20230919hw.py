@@ -24,4 +24,5 @@ for word in word_list:
         word_frequency[word] = 1
         existed_words.append(word)
 
-print(word_frequency)
+for word in sorted(word_frequency, key = word_frequency.get, reverse = True):
+    print(f"{word} appeared: {word_frequency[word]} times\n")
