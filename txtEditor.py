@@ -71,7 +71,7 @@ def writeText():
                     if userInput.upper() == "CANCEL":
                         break
                     else:
-                        writingFile.write(userInput)
+                        writingFile.write(userInput + "\n")
                 userConfirmation = input("\nPress Enter to return to menu.")
         except FileNotFoundError:
             print(f"{fileName} not found, please try again.")
@@ -94,7 +94,7 @@ def appendText():
                     if userInput.upper() == "CANCEL":
                         break
                     else:
-                        writingFile.write(userInput)
+                        writingFile.write(userInput + "\n")
                 userConfirmation = input("\nPress Enter to return to menu.")
         except FileNotFoundError:
             print(f"{fileName} not found, please try again.")
