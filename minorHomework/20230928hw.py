@@ -23,7 +23,7 @@ tests = [
 #print(re.search("^[1-9]{1}([0-9]{1})?([0-9]{1})?(,[0-9]{3})*.[0-9][1-9]$", input("Input: ")))
 
 def reTest(testList):
-    for test in tests:
+    for test in testList:
         numMatch = (re.search("^[1-9]{1}([0-9]{1})?([0-9]{1})?(,[0-9]{3})*.[0-9][1-9]$", test[0]))
         if numMatch == None:
             result = "Fail"
