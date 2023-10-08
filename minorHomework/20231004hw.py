@@ -22,10 +22,16 @@ class VectorValue: # For all "Magic Methods" check https://python-course.eu/oop/
         return (f"({self._x}, {self._y})")
     
     def __mul__(self, otherVector):
-        return (VectorValue((self._x * otherVector._x), (self._y * otherVector._y)))
+        if (type(otherVector) in [int, float]):
+            return (VectorValue((self._x * otherVector), (self._y * otherVector)))
+        else:
+            return (VectorValue((self._x * otherVector._x), (self._y * otherVector._y)))
     
     def __rmul__(self, otherVector):
-        return (VectorValue((self._x * otherVector._x), (self._y * otherVector._y)))
+        if (type(otherVector) in [int, float]):
+            return (VectorValue((self._x * otherVector), (self._y * otherVector)))
+        else:
+            return (VectorValue((self._x * otherVector._x), (self._y * otherVector._y)))
     
     def magnitude(self):
         return (math.sqrt((self._x ** 2) + (self._y ** 2)))
@@ -35,4 +41,6 @@ vector1 = VectorValue(1, 3)
 vector2 = vector0 + vector1
 vector3 = vector0 - vector1
 vector4 = vector2 * vector3
-print(f"{vector2}\n{vector3}\n{vector4}")
+vector5 = vector3 * 5
+vector6 = 5 * vector3
+print(f"{vector2}\n{vector3}\n{vector4}\n{vector5}\n{vector6}")
