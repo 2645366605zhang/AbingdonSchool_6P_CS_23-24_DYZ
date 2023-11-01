@@ -34,7 +34,7 @@ class StockItem():
         details = (f"Title: {self._title}\nAcquired on {self._dateAcquired.isoformat()}") + self.getLoanDetails()
         return details
 
-    def displayDeatils(self):
+    def displayDetails(self):
         print("\n" + self.getDetails())
 
 class Book(StockItem):
@@ -68,7 +68,7 @@ class Disk(StockItem):
 # Examples
 
 exampleBook = Book("The Example Book", "PLACEHOLDER", "1145141919810")
-exampleBook.displayDeatils()
+exampleBook.displayDetails()
 exampleDisk = Disk("Never Gonna Give You Up", "Rick Astley", 212)
 exampleDisk.setLoan()
 print("\n", end = "")
