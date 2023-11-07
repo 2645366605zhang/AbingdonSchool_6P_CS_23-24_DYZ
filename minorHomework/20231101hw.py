@@ -4,6 +4,9 @@ import datetime
 
 # Classes
 
+class Empty(Exception):
+    pass
+
 class StockItem():
 
     def __init__(self, title: str, dateAcquired: datetime = datetime.date.today(), description: str = "item", onLoan: bool = False):
@@ -46,6 +49,27 @@ class Book(StockItem):
         self._dateAcquired = dateAcquired
         self._description = description
         self._onLoan = onLoan
+        if not(self.checkISBN()):
+            print(f'Warning: The Book named "{self._title}" has a invalid ISBN: {self._isbn}')
+    
+    def checkISBN(self):
+        if len(self._isbn) != 13:
+            return False
+        calculatedDigit = 0
+        isbnIndex = 0
+        for digit in self._isbn:
+            if (isbnIndex % 2) == 0:
+                calculatedDigit += int(digit) * 3
+            else:
+                calculatedDigit += int(digit)
+            isbnIndex += 1
+        calculatedDigit = 10 - (calculatedDigit % 10)
+        if calculatedDigit == 10:
+            calculatedDigit = 0
+        if calculatedDigit == int(self._isbn[12:]):
+            return True
+        else:
+            return False
     
     def getDetails(self):
         details = self.getTitle() + (f"\nAuthor: {self._author}\nISBN: {self._isbn}\nAcquired on {self._dateAcquired.isoformat()}") + self.getLoanDetails()
@@ -66,10 +90,10 @@ class Disk(StockItem):
         return details
 
 # Examples
-
-exampleBook = Book("The Example Book", "PLACEHOLDER", "1145141919810")
-exampleBook.displayDetails()
-exampleDisk = Disk("Never Gonna Give You Up", "Rick Astley", 212)
-exampleDisk.setLoan()
-print("\n", end = "")
-print(exampleDisk)
+if __name__ == "__main__":
+    exampleBook = Book("The Example Book", "PLACEHOLDER", "1145141919810")
+    exampleBook.displayDetails()
+    exampleDisk = Disk("Never Gonna Give You Up", "Rick Astley", 212)
+    exampleDisk.setLoan()
+    print("\n", end = "")
+    print(exampleDisk)

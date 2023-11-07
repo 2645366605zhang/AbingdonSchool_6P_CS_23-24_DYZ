@@ -167,6 +167,36 @@ class LinkedListStack:
             currentNode = currentNode.getNextNode()
         return dataList
 
+class GraphNode:
+    def __init__(self, name: str) -> None:
+        self.links = {}
+        self.name = name
+
+    # Connet self and node
+    def link(self, node, weight) -> None:
+        self.links[node] = weight # link node to self
+        node.links[self] = weight # link self to node
+
+    # Delete link between self and node, return True if successfully deleted, return False if there's no such link
+    def unlink(self, node) -> bool:
+        try:
+            del self.links[node]
+            del node.links[self]
+        except KeyError:
+            return False
+        else:
+            return True
+
+    # Check if there's link between self and node, if there is, return the weight, if there isn't return None.
+    def connects(self, node):
+        return self.links.get(node, None)
+
+    def __str__(self) -> str:
+        return self.name
+
+    def __len__(self) -> int:
+        return len(self.links)
+
 # Geometry
 
 class Rectangle:
