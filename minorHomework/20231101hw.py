@@ -90,6 +90,7 @@ class Disk(StockItem):
         return details
 
 # Examples
+
 if __name__ == "__main__":
     exampleBook = Book("The Example Book", "PLACEHOLDER", "1145141919810")
     exampleBook.displayDetails()
