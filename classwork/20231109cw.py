@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 class Wagon():
 
     def __init__(self, ownerName: str, weight: float, numberOfWheels: int):
@@ -65,6 +63,12 @@ class Slidings():
             return returnWagon
         else:
             raise Exception("The sliding is empty, failed to pop from it.")
+    
+    def checkTop(self):
+        if self.isEmpty():
+            return None
+        else:
+            return (self._wagons[self._topOfStackPointer])
 
 class Yard():
     
@@ -82,7 +86,13 @@ class Yard():
         if slidingID < len(self._slidings):
             return self._slidings[slidingID].pop()
         else:
-            raise Exception("Invalid sliding ID, failed to add wagon to it.")
+            raise Exception("Invalid sliding ID, failed to remove wagon from it.")
+    
+    def getWagon(self, slidingID: int):
+        if slidingID < len(self._slidings):
+            return self._slidings[slidingID].checkTop()
+        else:
+            raise Exception("Invalid sliding ID, failed to get wagon from it.")
     
     def showAllWagon(self, slidingID):
         if slidingID < len(self._slidings):
@@ -90,7 +100,7 @@ class Yard():
                 if not(wagon == None):
                     print(wagon.getOwnerName())
         else:
-            raise Exception("Invalid sliding ID, failed to add wagon to it.")
+            raise Exception("Invalid sliding ID, failed show wagons.")
 
 if __name__ == "__main__":
     testYard = Yard(5)
