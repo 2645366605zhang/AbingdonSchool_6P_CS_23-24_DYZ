@@ -39,12 +39,13 @@ class VectorValue: # For all "Magic Methods" check https://python-course.eu/oop/
     def magnitude(self):
         return (math.sqrt((math.sqrt((self._x ** 2) + (self._y ** 2)) ** 2) + (self._z ** 2)))
 
-vector0 = VectorValue(2, 2, 2)
-vector1 = VectorValue(1, 3, 1)
-vector2 = vector0 + vector1
-vector3 = vector0 - vector1
-vector4 = vector2 * vector3
-vector5 = vector3 * 5
-vector6 = 5 * vector3
-print(f"{vector2}\n{vector3}\n{vector4}\n{vector5}\n{vector6}")
-print(vector6.magnitude())
+if __name__ == "__main__":
+    vector0 = VectorValue(2, 2, 2)
+    vector1 = VectorValue(1, 3, 1)
+    vector2 = vector0 + vector1
+    vector3 = vector0 - vector1
+    vector4 = vector2 * vector3
+    vector5 = vector3 * 5
+    vector6 = 5 * vector3
+    print(f"{vector2}\n{vector3}\n{vector4}\n{vector5}\n{vector6}")
+    print(vector6.magnitude())
