@@ -22,7 +22,8 @@ def game():
         clearConsole()
         if (gameBoard.checkWin() != None) or (gameBoard.checkDraw()):
             break
-        print(gameBoard.aiTurn())
+        print(gameBoard.newAiTurn())
+        #print(gameBoard.aiTurn())
         #print(gameBoard.playerAiTurn())
         attempt += 1
     gameBoard.display()
