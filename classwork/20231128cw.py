@@ -38,7 +38,7 @@ def main():
     while True:
         validInput = False
         try:
-            clearConsole()
+            userChoice = None
             userChoice = int(input("""
 -------------------------
 K N O T  A N D  C R O S S
@@ -50,12 +50,18 @@ Please enter the integer of your choice.
 
 """))
         except ValueError:
+            clearConsole()
             print("Invalid input, please try again.")
         if userChoice == 1:
+            clearConsole()
             game()
         elif userChoice == 2:
             break
+        elif userChoice == None:
+            clearConsole()
+            print("Invalid input, please try again.")
         else:
+            clearConsole()
             print("Invalid input, please try again.")
 
 # Main

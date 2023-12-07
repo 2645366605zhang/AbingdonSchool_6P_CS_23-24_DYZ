@@ -125,7 +125,7 @@ Player 1: {self._aiName}
             if weightSeed in range(position[1], position[2] + 1):
                 targetID = position[0]
                 break
-        #print(f"\nrandomseed: {weightSeed}\nweightlist: {weightList}")
+        print(f"\nrandomseed: {weightSeed}\nweightlist: {weightList}") # Debug Mode
         # Place
         self.placeObject(self._objectPalette[1], targetID)
         self._objectPresent += 1
