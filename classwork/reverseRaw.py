@@ -1,39 +1,51 @@
-# Skeleton Program for the AQA COMP1 Summer 2016 examination
-# this code should be used in conjunction with the Preliminary Material
-# written by the AQA COMP1 Programmer Team
-# developed in a Python 3.4 programming environment
+#Skeleton Program for the AQA COMP1 Summer 2016 examination
+#this code should be used in conjunction with the Preliminary Material
+#written by the AQA COMP1 Programmer Team
+#developed in a Python 3.4 programming environment
 
 import random
 
-# Manipulate the content of the board according to the situation of game
 def SetUpGameBoard(Board, Boardsize):
-  for Row in range(1, BoardSize + 1):
-    for Column in range(1, BoardSize + 1):
-      if (Row == (BoardSize + 1) // 2 and Column == (BoardSize + 1) // 2 + 1) or (Column == (BoardSize + 1) // 2 and Row == (BoardSize + 1) // 2 + 1):
-        Board[Row][Column] = "C"
-      elif (Row == (BoardSize + 1) // 2 + 1 and Column == (BoardSize + 1) // 2 + 1) or (Column == (BoardSize + 1) // 2 and Row == (BoardSize + 1) // 2):
-        Board[Row][Column] = "H"
-      else:
-        Board[Row][Column] = " "
+  invalidChoice = True
+  while invalidChoice:
+    userChoice = input("Would you like to start in the middle or at the edge?\nEnter m for middle and e for edge.").upper()
+    if userChoice == "M":
+      invalidChoice = False
+      for Row in range(1, BoardSize + 1):
+        for Column in range(1, BoardSize + 1):
+          if (Row == (BoardSize + 1) // 2 and Column == (BoardSize + 1) // 2 + 1) or (Column == (BoardSize + 1) // 2 and Row == (BoardSize + 1) // 2 + 1):
+            Board[Row][Column] = "C"
+          elif (Row == (BoardSize + 1) // 2 + 1 and Column == (BoardSize + 1) // 2 + 1) or (Column == (BoardSize + 1) // 2 and Row == (BoardSize + 1) // 2):
+            Board[Row][Column] = "H"
+          else:
+            Board[Row][Column] = " "
+    elif userChoice == "E":
+      invalidChoice = False
+      for Row in range(1, BoardSize + 1):
+        for Column in range(1, BoardSize + 1):
+          if (Row == 1 and Column == BoardSize) or (Column == 1 and Row == BoardSize):
+            Board[Row][Column] = "C"
+          elif (Row == 1 and Column == 1) or (Column == BoardSize and Row == BoardSize):
+            Board[Row][Column] = "H"
+          else:
+            Board[Row][Column] = " "
+    else:
+      print("Invalid choice, please try again.")
 
-# Take the user's input for how big the user wnat the board to be
 def ChangeBoardSize():
   BoardSize = int(input("Enter a board size (between 4 and 9): "))
   while not(BoardSize >= 4 and BoardSize <= 9):
     BoardSize = int(input("Enter a board size (between 4 and 9): "))
   return BoardSize
 
-# Take the user's input for where to put the user's pawn on the board
 def GetHumanPlayerMove(PlayerName):
   print(PlayerName, "enter the coodinates of the square where you want to place your piece: ", end="")
   Coordinates = int(input())
   return Coordinates
 
-# Randomly generate a coordinate for the computer to put its pawn on the board
 def GetComputerPlayerMove(BoardSize):
   return random.randint(1, BoardSize) * 10 + random.randint(1, BoardSize)
 
-# Reset the board after the game ends
 def GameOver(Board, BoardSize):
   for Row in range(1 , BoardSize + 1):
     for Column in range(1, BoardSize + 1):
@@ -41,12 +53,13 @@ def GameOver(Board, BoardSize):
         return False
   return True
 
-# Take the user's input for the user's name shown in the game
 def GetPlayersName():
   PlayerName = input("What is your name? ")
+  if PlayerName == "":
+    print("That is not a valid name, using default name instead")
+    PlayerName = "Human player"
   return PlayerName
 
-# Check if the coordinate taken is valid(is inthe range of board and is empty)
 def CheckIfMoveIsValid(Board, Move):
   Row = Move % 10
   Column = Move // 10
@@ -55,7 +68,6 @@ def CheckIfMoveIsValid(Board, Move):
     MoveIsValid = True
   return MoveIsValid
 
-# Calculate the player's score my counting the number of pawns that belong to the player on the board
 def GetPlayerScore(Board, BoardSize, Piece):
   Score = 0
   for Row in range(1, BoardSize + 1):
@@ -64,7 +76,6 @@ def GetPlayerScore(Board, BoardSize, Piece):
         Score = Score + 1
   return Score
 
-# Check if any pawns can be fliped according to the game rules by looping through each pawn on the board
 def CheckIfThereArePiecesToFlip(Board, BoardSize, StartRow, StartColumn, RowDirection, ColumnDirection):
   RowCount = StartRow + RowDirection
   ColumnCount = StartColumn + ColumnDirection
@@ -84,7 +95,6 @@ def CheckIfThereArePiecesToFlip(Board, BoardSize, StartRow, StartColumn, RowDire
     ColumnCount = ColumnCount + ColumnDirection
   return FlipFound
 
-# Actually flip the pieces by looping through the column&row given
 def FlipOpponentPiecesInOneDirection(Board, BoardSize, StartRow, StartColumn, RowDirection, ColumnDirection):
   FlipFound = CheckIfThereArePiecesToFlip(Board, BoardSize, StartRow, StartColumn, RowDirection, ColumnDirection)
   if FlipFound:
@@ -98,7 +108,6 @@ def FlipOpponentPiecesInOneDirection(Board, BoardSize, StartRow, StartColumn, Ro
       RowCount = RowCount + RowDirection
       ColumnCount = ColumnCount + ColumnDirection
 
-# Have either the player or the computer decide where to make a move and place the pawn down, and then flip any available pawn
 def MakeMove(Board, BoardSize, Move, HumanPlayersTurn):
   Row = Move % 10
   Column = Move // 10
@@ -111,14 +120,13 @@ def MakeMove(Board, BoardSize, Move, HumanPlayersTurn):
   FlipOpponentPiecesInOneDirection(Board, BoardSize, Row, Column, 0, 1)
   FlipOpponentPiecesInOneDirection(Board, BoardSize, Row, Column, 0, -1)
 
-# Displays the lines in the board
+
 def PrintLine(BoardSize):
   print("   ", end="")
   for Count in range(1, BoardSize * 2):
     print("_", end="")
   print()
 
-# Displays the acutal board
 def DisplayGameBoard(Board, BoardSize):
   print()
   print("  ", end="")
@@ -137,7 +145,6 @@ def DisplayGameBoard(Board, BoardSize):
     PrintLine(BoardSize)
     print()
 
-# Displays the menu
 def DisplayMenu():
   print("(p)lay game")
   print("(e)nter name")
@@ -145,13 +152,11 @@ def DisplayMenu():
   print("(q)uit")
   print()
 
-# Take the user's input for the user's choice in the menu
 def GetMenuChoice(PlayerName):
   print(PlayerName, "enter the letter of your chosen option: ", end="")
-  Choice = input().lower()
+  Choice = input()
   return Choice
 
-# Create a list to store the board used in the game
 def CreateBoard():
   Board = []
   for Count in range(BoardSize + 1):
@@ -160,9 +165,6 @@ def CreateBoard():
       Board[Count].append("")
   return Board
 
-# The main function of the game process, after setting up the board by using several functions,
-# let the computer and player take moves until the board is full,
-# and then check who won and display a message indicating the winner or draw
 def PlayGame(PlayerName, BoardSize):
   Board = CreateBoard()
   SetUpGameBoard(Board, BoardSize)
@@ -192,14 +194,15 @@ def PlayGame(PlayerName, BoardSize):
     print("The computer has won the game!")
   print()
 
-# Set up the seed used to random generate an integer for the computer's move
+def GetFlipSquares(Board, BoardSize):
+  for Row in range(1, BoardSize + 1):
+    for Column in range(1, BoardSize + 1):
+      pass
+
 random.seed()
-# Default size of the board
 BoardSize = 6
-# Declare variables
 PlayerName = ""
 Choice = ""
-# Main menu process
 while Choice != "q":
   DisplayMenu()
   Choice = GetMenuChoice(PlayerName)
