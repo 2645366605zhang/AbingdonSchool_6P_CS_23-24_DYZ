@@ -1,2 +1,2 @@
-mystr = "apple"
-print(mystr[1])
+mynum = "agf"
+print(float(mynum))
