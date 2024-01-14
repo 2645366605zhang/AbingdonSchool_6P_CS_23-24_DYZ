@@ -26,8 +26,11 @@ class MainWindow(Widgets.QMainWindow):
 
         self.emptyLine = Widgets.QLabel("")
 
-        self.convertButton = Widgets.QPushButton("Convert")
+        self.convertButton = Widgets.QPushButton("🔄Convert")
         self.convertButton.clicked.connect(self.convertButtonClicked)
+
+        self.clearButton = Widgets.QPushButton("💣Clear")
+        self.clearButton.clicked.connect(self.clearButtonClicked)
 
         self.resultLabel = Widgets.QLabel("No result")
 
@@ -41,6 +44,7 @@ class MainWindow(Widgets.QMainWindow):
         layout.addWidget(self.resultLabel)
         layout.addWidget(self.metreUnit)
         layout.addWidget(self.emptyLine)
+        layout.addWidget(self.clearButton)
         layout.addWidget(self.convertButton)
 
         widget = Widgets.QWidget()
@@ -54,10 +58,16 @@ class MainWindow(Widgets.QMainWindow):
         try:
             self.convertResult = (float(self.feetInput) / 3.281)
         except TypeError:
+            self.errorMessageBox = Widgets.QMessageBox.warning(self, "", f"Invalid Input:\n{self.feetInput}", Widgets.QMessageBox.StandardButton.Ok)
             self.convertResult = "error"
         except ValueError:
+            self.errorMessageBox = Widgets.QMessageBox.warning(self, "", f"Invalid Input:\n{self.feetInput}", Widgets.QMessageBox.StandardButton.Ok)
             self.convertResult = "error"
         self.resultLabel.setText(str(self.convertResult))
+    
+    def clearButtonClicked(self):
+        self.feetInputBox.setText("")
+        self.resultLabel.setText("No result")
 
 application = Widgets.QApplication([])
 window = MainWindow()
