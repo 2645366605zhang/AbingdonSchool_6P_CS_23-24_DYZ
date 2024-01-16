@@ -22,7 +22,7 @@ class MainWindow(Widgets.QMainWindow):
         self.setCentralWidget(widget)
     
     def checkerButtonclicked(self):
-        self.successMessageBox = Widgets.QMessageBox.information(self, "", "Congratulations! Your left mouse button works fine!", Widgets.QMessageBox.StandardButton.Ok)
+        self.successMessageBox = Widgets.QMessageBox.information(self, " ", "Congratulations! Your left mouse button works fine!", Widgets.QMessageBox.StandardButton.Ok)
 
 application = Widgets.QApplication([])
 window = MainWindow()
