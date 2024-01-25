@@ -1,2 +1,2 @@
-mynum = "agf"
-print(float(mynum))
+myStr = "5"
+print(myStr.upper())

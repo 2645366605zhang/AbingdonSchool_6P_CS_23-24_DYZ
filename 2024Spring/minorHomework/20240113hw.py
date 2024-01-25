@@ -1,6 +1,7 @@
 from PyQt6 import QtWidgets as Widgets
 from PyQt6 import QtGui as Gui
 from PyQt6 import QtCore as Core
+from PyQt6.QtGui import QCloseEvent
 
 class MainWindow(Widgets.QMainWindow):
 
@@ -22,16 +23,16 @@ class MainWindow(Widgets.QMainWindow):
         #self.saveAction = Gui.QAction("Save", self)
         #self.saveAction.setShortcut("Ctrl+Shift+S")
         #self.saveAction.triggered.connect(self.saveText)
-        self.saveFileAction = Gui.QAction("Save File", self)
+        self.saveFileAction = Gui.QAction("💾 Save File", self)
         self.saveFileAction.setShortcut("Ctrl+S")
         self.saveFileAction.triggered.connect(self.saveButtonClicked)
-        self.saveNewFileAction = Gui.QAction("Save As New File", self)
+        self.saveNewFileAction = Gui.QAction("💾 Save As New File", self)
         self.saveNewFileAction.setShortcut("Ctrl+Shift+S")
         self.saveNewFileAction.triggered.connect(self.saveAsNewFile)
-        self.loadFileAction = Gui.QAction("Load File", self)
+        self.loadFileAction = Gui.QAction("📁 Load File", self)
         self.loadFileAction.setShortcut("Ctrl+O")
         self.loadFileAction.triggered.connect(self.loadButtonClicked)
-        self.quitAction = Gui.QAction("Quit", self)
+        self.quitAction = Gui.QAction("🚪 Quit", self)
         self.quitAction.triggered.connect(self.quitButtonClicked)
 
         #self.addAction(self.saveAction)
@@ -74,16 +75,16 @@ class MainWindow(Widgets.QMainWindow):
         widget.setLayout(mainLayout)
         self.setCentralWidget(widget)
     
-    def saveText(self):
+    def saveText(self) -> None:
         self.currentContent = self.mainText.toPlainText()
         self.currentLength = len(self.currentContent)
         self.extraInformation.setText(f"Current Length: {self.currentLength}")
         self.notYetSaved = True
         print("Saved file changed internally.")
 
-    def saveButtonClicked(self):
+    def saveButtonClicked(self) -> None:
         if self.currentFilePath:
-            with open(self.currentFilePath, "w") as userFile:
+            with open(self.currentFilePath, "w", encoding = "utf-8") as userFile:
                 userFile.write(self.currentContent)
             self.extraInformation.setText(f"{self.currentFileName} saved.")
             self.notYetSaved = False
@@ -96,7 +97,7 @@ class MainWindow(Widgets.QMainWindow):
                     self.currentFileName = filename.split("/")[-1]
                     self.fileTitle.setText(self.currentFileName)
                     self.currentFilePath = filename
-                    with open(filename, "w") as userFile:
+                    with open(filename, "w", encoding = "utf-8") as userFile:
                         userFile.write(self.currentContent)
                     self.extraInformation.setText(f"{self.currentFileName} saved.")
                     self.notYetSaved = False
@@ -106,7 +107,7 @@ class MainWindow(Widgets.QMainWindow):
             else:
                 print("File saving cancelled.")
     
-    def saveAsNewFile(self):
+    def saveAsNewFile(self) -> None:
         filename, _ = Widgets.QFileDialog.getSaveFileName(self, "Save File", ".", "Text Files (*.txt *.html *.md *.markdown *.json)")
         if filename:
             self.overwriteConfirmationMessageBox = Widgets.QMessageBox.warning(self, "Confirmation", "This file will overwrite another file if they have the same name. Proceed?", Widgets.QMessageBox.StandardButton.Yes, Widgets.QMessageBox.StandardButton.No)
@@ -114,7 +115,7 @@ class MainWindow(Widgets.QMainWindow):
                 self.currentFileName = filename.split("/")[-1]
                 self.fileTitle.setText(self.currentFileName)
                 self.currentFilePath = filename
-                with open(filename, "w") as userFile:
+                with open(filename, "w", encoding = "utf-8") as userFile:
                     userFile.write(self.currentContent)
                 self.notYetSaved = False
                 print(f"File {self.currentFileName} saved.\nPath: {self.currentFilePath}")
@@ -123,20 +124,20 @@ class MainWindow(Widgets.QMainWindow):
         else:
             print("File saving cancelled.")
 
-    def loadButtonClicked(self):
+    def loadButtonClicked(self) -> None:
         filename, _ = Widgets.QFileDialog.getOpenFileName(self, "Open File", ".", "Text Files (*.txt *.html *.md *.markdown *.json)")
         if filename:
             self.currentFileName = filename.split("/")[-1]
             self.fileTitle.setText(self.currentFileName)
             self.currentFilePath = filename
-            with open(filename, "r") as userFile:
+            with open(filename, "r", encoding = "utf-8") as userFile:
                 self.currentContent = userFile.read()
             self.mainText.setPlainText(self.currentContent)
             print(f"File {self.currentFileName} opened.\nPath: {self.currentFilePath}")
         else:
             print("File laoding cancelled.")
 
-    def quitButtonClicked(self):
+    def quitButtonClicked(self) -> None:
         self.quitConfirmMessageBox = Widgets.QMessageBox.warning(self, "Confirmation", "Are you sure you want to quit?", Widgets.QMessageBox.StandardButton.Yes, Widgets.QMessageBox.StandardButton.No)
         if self.quitConfirmMessageBox == Widgets.QMessageBox.StandardButton.Yes:
             if self.notYetSaved:
@@ -144,6 +145,17 @@ class MainWindow(Widgets.QMainWindow):
                 if self.saveConfirmMessageBox == Widgets.QMessageBox.StandardButton.Yes:
                     self.saveButtonClicked()
             self.close()
+    
+    def closeEvent(self, event) -> None:
+        self.quitConfirmMessageBox = Widgets.QMessageBox.warning(self, "Confirmation", "Are you sure you want to quit?", Widgets.QMessageBox.StandardButton.Yes, Widgets.QMessageBox.StandardButton.No)
+        if self.quitConfirmMessageBox == Widgets.QMessageBox.StandardButton.Yes:
+            if self.notYetSaved:
+                self.saveConfirmMessageBox = Widgets.QMessageBox.warning(self, "Confirmation", "File not saved since last edit. Save?", Widgets.QMessageBox.StandardButton.Yes, Widgets.QMessageBox.StandardButton.No)
+                if self.saveConfirmMessageBox == Widgets.QMessageBox.StandardButton.Yes:
+                    self.saveButtonClicked()
+            event.accept()
+        else:
+            event.ignore()
 
 application = Widgets.QApplication([])
 window = MainWindow()

@@ -1,0 +1,117 @@
+@startuml
+class Household {
+    GetDetails()
+    GetChanceEatOut()
+    GetX()
+    GetY()
+        _XCoord
+    _YCoord
+    _ChanceEatOutPerDay
+    _ID
+    __init__()
+}
+class Settlement {
+    GetNumberOfHouseholds()
+    GetXSize()
+    GetYSize()
+    GetRandomLocation()
+    _CreateHouseholds()
+    AddHousehold()
+    DisplayHouseholds()
+    FindOutifHouseholdEatsOut()
+        _XSize
+    _YSize
+    _StartNoOfHouseholds
+    __init__()
+}
+class LargeSettlement {
+        __init__()
+}
+class Outlet {
+    GetCapacity()
+    GetX()
+    GetY()
+    AlterDailyCost()
+    AlterCapacity()
+    IncrementVisits()
+    NewDay()
+    CalculateDailyProfitLoss()
+    GetDetails()
+        _XCoord
+    _YCoord
+    _Capacity
+    _MaxCapacity
+    _DailyCosts
+    _Capacity
+    _Capacity
+    _DailyCosts
+    _VisitsToday
+    __init__()
+}
+class Company {
+    GetName()
+    GetNumberOfOutlets()
+    GetReputationScore()
+    AlterDailyCosts()
+    AlterAvgCostPerMeal()
+    AlterFuelCostPerUnit()
+    AlterReputation()
+    NewDay()
+    AddVisitToNearestOutlet()
+    GetDetails()
+    ProcessDayEnd()
+    CloseOutlet()
+    ExpandOutlet()
+    OpenOutlet()
+    __GetListOfOutlets()
+    __GetDistanceBetweenTwoOutlets()
+    CalculateDeliveryCost()
+        _FamilyOutletCost
+    _FastFoodOutletCost
+    _NamedChefOutletCost
+    _FamilyFoodOutletCapacity
+    _FastFoodOutletCapacity
+    _NamedChefOutletCapacity
+    _Name
+    _Category
+    _Balance
+    _FuelCostPerUnit
+    _BaseCostOfDelivery
+    _ReputationScore
+    _DailyCosts
+    _AvgCostPerMeal
+    _AvgPricePerMeal
+    _AvgCostPerMeal
+    _AvgPricePerMeal
+    _AvgCostPerMeal
+    _AvgPricePerMeal
+    _Capacity
+    _Capacity
+    _Capacity
+    __init__()
+}
+class Simulation {
+    DisplayMenu()
+    __DisplayCompaniesAtDayEnd()
+    __ProcessAddHouseholdsEvent()
+    __ProcessCostOfFuelChangeEvent()
+    __ProcessReputationChangeEvent()
+    __ProcessCostChangeEvent()
+    __DisplayEventsAtDayEnd()
+    ProcessDayEnd()
+    AddCompany()
+    GetIndexOfCompany()
+    ModifyCompany()
+    DisplayCompanies()
+    Run()
+    Main()
+        _FuelCostPerUnit
+    _BaseCostforDelivery
+    _SimulationSettlement
+    _SimulationSettlement
+    _NoOfCompanies
+    _NoOfCompanies
+    __init__()
+}
+Settlement <|-- LargeSettlement
+@enduml
