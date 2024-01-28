@@ -5,6 +5,7 @@
 
 import math
 import random
+from getPermutation import getPermutationList as getP
 
 class Household:
   _NextID = 1
@@ -262,15 +263,19 @@ class Company:
       Temp.append(Current)
     return Temp
 
-  def __GetDistanceBetweenTwoOutlets(self, Outlet1, Outlet2):
+  def __GetDistanceBetweenTwoOutlets(self, Outlet1: int, Outlet2: int) -> float:
     return math.sqrt((self._Outlets[Outlet1].GetX() - self._Outlets[Outlet2].GetX()) ** 2 + (self._Outlets[Outlet1].GetY() - self._Outlets[Outlet2].GetY()) ** 2)
 
   def CalculateDeliveryCost(self):
-    ListOfOutlets = self.__GetListOfOutlets()
-    TotalDistance = 0.0
-    for Current in range (0, len(ListOfOutlets) - 1):
-      TotalDistance += self.__GetDistanceBetweenTwoOutlets(ListOfOutlets[Current], ListOfOutlets[Current + 1])
-    TotalCost = TotalDistance * self._FuelCostPerUnit
+    permutationsOfOutlets = getP(self.__GetListOfOutlets())
+    totalDistance = 0.0
+    for permutation in permutationsOfOutlets:
+      currentDistance = 0.0
+      for current in range(0, len(permutation) - 1):
+        currentDistance += self.__GetDistanceBetweenTwoOutlets(permutation[current], permutation[current + 1])
+      if currentDistance < totalDistance:
+        totalDistance = currentDistance
+    TotalCost = totalDistance * self._FuelCostPerUnit
     return TotalCost
   
   def checkIfBankrupt(self) -> bool:
@@ -418,7 +423,7 @@ class Simulation:
       TotalReputation += C.GetReputationScore()
       Reputations.append(TotalReputation)
       if C.checkIfBankrupt():
-        bankruptCompanies.append(self.GetIndexOfCompany(C.Name))
+        bankruptCompanies.append(self.GetIndexOfCompany(C._Name))
     LoopMax = self._SimulationSettlement.GetNumberOfHouseholds() - 1
     for Counter in range (0, LoopMax + 1):
       EatsOut, X, Y = self._SimulationSettlement.FindOutifHouseholdEatsOut(Counter)
