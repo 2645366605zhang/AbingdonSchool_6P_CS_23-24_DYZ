@@ -203,7 +203,7 @@ class Company:
     Details += "Name: " + self._Name + "\nType of business: " + self._Category + "\n"
     Details += "Current balance: " + str(self._Balance) + "\nAverage cost per meal: " + str(self._AvgCostPerMeal) + "\n"
     Details += "Average price per meal: " + str(self._AvgPricePerMeal) + "\nDaily costs: " + str(self._DailyCosts) + "\n"
-    Details += "Delivery costs: " + str(self.CalculateDeliveryCost()) + "\nReputation: " + str(self._ReputationScore) + "\n\n"
+    Details += "Delivery costs: " + str(self.CalculateDeliveryCost(self.GetMinimumOutletDistance())) + "\nReputation: " + str(self._ReputationScore) + "\n\n"
     Details += "Number of outlets: " + str(len(self._Outlets)) + "\nOutlets\n"
     for Current in range (1, len(self._Outlets) + 1):
       Details += str(Current) + ". " + self._Outlets[Current - 1].GetDetails() + "\n"
@@ -214,7 +214,7 @@ class Company:
     ProfitLossFromOutlets = 0
     ProfitLossFromThisOutlet = 0
     if len(self._Outlets) > 1:
-      DeliveryCosts = self._BaseCostOfDelivery + self.CalculateDeliveryCost()
+      DeliveryCosts = self._BaseCostOfDelivery + self.CalculateDeliveryCost(self.GetMinimumOutletDistance())
     else:
       DeliveryCosts = self._BaseCostOfDelivery
     Details += "Daily costs for company: " + str(self._DailyCosts) + "\nCost for delivering produce to outlets: " + str(DeliveryCosts) + "\n"
@@ -266,16 +266,37 @@ class Company:
   def __GetDistanceBetweenTwoOutlets(self, Outlet1: int, Outlet2: int) -> float:
     return math.sqrt((self._Outlets[Outlet1].GetX() - self._Outlets[Outlet2].GetX()) ** 2 + (self._Outlets[Outlet1].GetY() - self._Outlets[Outlet2].GetY()) ** 2)
 
-  def CalculateDeliveryCost(self):
+  def GetMinimumOutletDistance(self):
     permutationsOfOutlets = getP(self.__GetListOfOutlets())
-    totalDistance = 0.0
+    totalDistance = 18446744073709551615
     for permutation in permutationsOfOutlets:
       currentDistance = 0.0
       for current in range(0, len(permutation) - 1):
         currentDistance += self.__GetDistanceBetweenTwoOutlets(permutation[current], permutation[current + 1])
       if currentDistance < totalDistance:
         totalDistance = currentDistance
-    TotalCost = totalDistance * self._FuelCostPerUnit
+    if totalDistance == 18446744073709551615:
+      totalDistance = 0
+    return totalDistance
+  
+  def GetFastOutletDistance(self):
+    minimumDistance = 18446744073709551615
+    unvisitedListOfOutlets = self.__GetListOfOutlets()
+    totalDistance = 0.0
+    currentOutlet = unvisitedListOfOutlets.pop()
+    while len(unvisitedListOfOutlets) > 0:
+      for outlet in unvisitedListOfOutlets:
+        currentDistance = self.__GetDistanceBetweenTwoOutlets(currentOutlet, outlet)
+        if currentDistance < minimumDistance:
+          minimumDistance = currentDistance
+          nearestOutlet = outlet
+      totalDistance += minimumDistance
+      currentOutlet = nearestOutlet
+      unvisitedListOfOutlets.remove(nearestOutlet)
+    return totalDistance
+
+  def CalculateDeliveryCost(self, distance):
+    TotalCost = distance * self._FuelCostPerUnit
     return TotalCost
   
   def checkIfBankrupt(self) -> bool:
@@ -320,6 +341,10 @@ class Simulation:
       for Count in range (1, self._NoOfCompanies + 1):
         self.AddCompany()
             
+  def ShowDeliveryDistances(self):
+    for company in self._Companies:
+      print(f"\nDelivery cost for {company._Name}:\nMinimum: {company.CalculateDeliveryCost(company.GetMinimumOutletDistance())}\nFast: {company.CalculateDeliveryCost(company.GetFastOutletDistance())}\n")
+  
   def DisplayMenu(self):
     print("\n*********************************")
     print("**********    MENU     **********")
@@ -330,6 +355,7 @@ class Simulation:
     print("4. Add new company")
     print("5. Advance to next day")
     print("6. Advance x days")
+    print("7. ")
     print("Q. Quit")
     print("\nEnter your choice: ", end = "")
 
@@ -539,6 +565,8 @@ class Simulation:
         self.ProcessDayEnd()
       elif Choice == "6":
         self.ProcessXDays()
+      elif Choice == "7":
+        self.ShowDeliveryDistances()
       elif Choice == "Q":
         print("Simulation finished, press Enter to close.")
         input()
