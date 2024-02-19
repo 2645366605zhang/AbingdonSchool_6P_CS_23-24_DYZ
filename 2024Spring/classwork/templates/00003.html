@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            Birthday
+        </title>
+    </head>
+    <body>
+        {% if daysUntil %}
+            <h2>
+                Birthday Data
+            </h2>
+            <p>
+                Month: {{month}}
+            </p>
+            <p>
+                Day: {{day}}
+            </p>
+            <p>
+                Days until next birthday: {{daysUntil}}
+            </p>
+        {% else %}
+            <p>
+                Invalid Arguments
+            </p>
+        {% endif %}
+    </body>
+</html>

@@ -13,6 +13,6 @@ if __name__ == "__main__":
     #print(getPermutationList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
     #print(list(permutations(list(range(0, 10)))))
 
-    for permutation in permutations("saippuakivikauppias"):
-        if permutation == "saippuakivikauppias":
+    for permutation in list(permutations("ufotofu")):
+        if permutation == ("u", "f", "o", "t", "o", "f", "u"):
             print(permutation)
