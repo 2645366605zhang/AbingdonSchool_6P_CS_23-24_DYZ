@@ -7,10 +7,29 @@
         </title>
     </head>
     <body>
-        {% if name %}
-            Welcome to this website, {{name}}
+        <form action = "/welcome" method = "post">
+            <p>
+                What is your name?
+            </p>
+            <p>
+                <input type = "text" id = "visitorName" name = "visitorName" value = "Insert name here">
+            </p>
+            <p>
+                <input type = "submit" value = "Submit" />
+            </p>
+        </form>
+        {% if name == "Insert name here" %}
+            <p>
+                Welcome to this website, stranger
+            </p>
+        {% elif name %}
+            <p>
+                Welcome to this website, {{name}}
+            </p>
         {% else %}
-            Welcome to this website, stranger
+            <p>
+                Welcome to this website, stranger
+            </p>
         {% endif %}
     </body>
 </html>

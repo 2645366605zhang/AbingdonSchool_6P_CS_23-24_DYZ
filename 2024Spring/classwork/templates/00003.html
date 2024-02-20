@@ -7,6 +7,26 @@
         </title>
     </head>
     <body>
+        <form action = "/functions/birthday" method = "post">
+            <p>
+                Please enter your birthday:
+            </p>
+            <p>
+                Month:
+            </p>
+            <p>
+                <input type="text" id = "visitorBirthdayMonth" name = "visitorBirthdayMonth" value = "Insert your birth month here">
+            </p>
+            <p>
+                Day:
+            </p>
+            <p>
+                <input type = "text" id = "visitorBirthdayDay" name = "visitorBirthdayDay" value = "Insert your birth day here">
+            </p>
+            <p>
+                <input type = "submit" value = "Submit" />
+            </p>
+        </form>
         {% if daysUntil %}
             <h2>
                 Birthday Data

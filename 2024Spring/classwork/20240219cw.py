@@ -1,12 +1,13 @@
 # Imports
 
 from time import sleep as wait
+from math import sqrt
 
 # Constants
 
 def dec2FPBin(decNum: float, maxDP: int = 1024) -> str:
     # Integer Process
-    integerResult = "0"
+    integerResult = ""
     integerDecNum = int(decNum // 1)
     print(f"\n\nintegerDecNum: {integerDecNum}\n\n")
     while True:
@@ -16,9 +17,9 @@ def dec2FPBin(decNum: float, maxDP: int = 1024) -> str:
             integerResult = f"{integerDecNum % 2}" + integerResult
             integerDecNum = integerDecNum // 2
         print(f"\nDebug:\nintegerDecNum: {integerDecNum}\nintegerResult: {integerResult}\n")
-        wait(0.05)
-    if integerResult[:1] == "0" and len(integerResult) > 1:
-        integerResult = integerResult[1:]
+        wait(0.01)
+    if integerResult == "":
+        integerResult = "0"
     # Decimal Point Process
     decNum -= decNum // 1
     result = ""
@@ -61,4 +62,4 @@ def dec2FPBin(decNum: float, maxDP: int = 1024) -> str:
 # Main
 
 if __name__ == "__main__":
-    print(dec2FPBin(114.514))
+    print(dec2FPBin(sqrt(2), 4096))

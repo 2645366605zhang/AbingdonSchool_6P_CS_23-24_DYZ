@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            Chatroom
+        </title>
+    </head>
+    <body>
+        <h1>
+            Welcome to the chatroom!
+        </h1>
+        <h2>
+            Chat History: 
+        </h2>
+        {% for line in historyChat %}
+            <p>
+                {{line}}
+            </br>
+        {% endfor %}
+        <h2>
+            Your message: 
+        </h2>
+        <form action = "/functions/chatroom" method = "post">
+            <p>
+                Your name (will show in history): 
+            </p>
+            <p>
+                <input type = "text" id = "visitorName" name = "visitorName" value = "">
+            </p>
+            <p>
+                Your message: 
+            </p>
+            <p>
+                <input type = "text" id = "visitorMessage" name = "visitorMessage" value = "">
+            </p>
+            <p>
+                <input type = "submit" value = "Send" />
+            </p>
+        </form>
+        {% if invalidInput == "" %}
+            <p>
+                
+            </p>
+        {% elif invalidInput %}
+            <p>
+                Invalid or empty input, please try again.
+            </p>
+        {% endif %}
+    </body>
+</html>
