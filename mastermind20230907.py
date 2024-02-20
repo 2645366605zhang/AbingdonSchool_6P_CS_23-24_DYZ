@@ -11,7 +11,7 @@ debugMode = False
 
 def readScoreboard(scoreboard):
     try:
-        scoreboardFile = open(scoreboardDirection, "r")
+        scoreboardFile = open(scoreboardDirection, "r", encoding = "utf-8")
         for line in scoreboardFile:
             dataList = line.split("|")
             name = dataList[0]
@@ -24,7 +24,7 @@ def readScoreboard(scoreboard):
     return scoreboard
 
 def writeScoreboard():
-    scoreboardFile = open(scoreboardDirection, "w")
+    scoreboardFile = open(scoreboardDirection, "w", encoding = "utf-8")
     for record in legacyScore:
         scoreboardFile.write(record[0])
         scoreboardFile.write("|")

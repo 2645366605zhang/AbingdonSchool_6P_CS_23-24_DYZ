@@ -46,7 +46,7 @@ myApp = FlaskApplication(__name__)
 def chatroomMessageHistoryFile2List() -> list:
     chatroomMessageList = []
     messageLineCount = 0
-    with open(chatroomHistoryDirection, "r") as chatroomHistoryFile:
+    with open(chatroomHistoryDirection, "r", encoding = "utf-8") as chatroomHistoryFile:
         chatroomMessageRawList = chatroomHistoryFile.readlines()
     for line in chatroomMessageRawList:
         chatroomMessageList.append(line.replace("\n", " "))
@@ -54,7 +54,7 @@ def chatroomMessageHistoryFile2List() -> list:
     return chatroomMessageList
 
 def checkSpam(message: Message) -> bool:
-    with open(chatroomHistoryDirection, "r") as chatroomHistoryFile:
+    with open(chatroomHistoryDirection, "r", encoding = "utf-8") as chatroomHistoryFile:
         chatroomMessageRawList = chatroomHistoryFile.readlines()
     #print(f"\nfirst line:\n{message._username} (IP: {message._ip})\nchatroomMessageRawList[-10:]:\n{chatroomMessageRawList[-64:]}\n\nthird line:\n{message._content}\nchatroomMessageRawList[-3:]:\n{chatroomMessageRawList[-16:]}\n")
     if ((f"{message._username} (IP: {message._ip})" + "\n") in chatroomMessageRawList[-64:]) and ((f"   {message._content}" + "\n") in chatroomMessageRawList[-16:]):
@@ -152,7 +152,6 @@ def christmasFunction():
 
 @myApp.route("/functions/chatroom", methods = ["POST", "GET"])
 def chatroom():
-    chatroomHistory = chatroomMessageHistoryFile2List()
     if requestVariable.method == "POST":
         visitorName = requestVariable.form["visitorName"]
         visitorIP = requestVariable.remote_addr
@@ -161,8 +160,14 @@ def chatroom():
             try:
                 visitorMessage = Message(visitorName, visitorIP, visitorMessageText)
                 if not(checkSpam(visitorMessage)):
-                    with open(chatroomHistoryDirection, "a") as chatroomHistoryFile:
+                    with open(chatroomHistoryDirection, "a", encoding = "utf-8") as chatroomHistoryFile:
                         chatroomHistoryFile.write(visitorMessage.getFormattedMessage())
+                        chatroomHistory.append(f"{visitorMessage._username} (IP: {visitorMessage._ip}) ")
+                        chatroomHistory.append(f"(Greenwich Time: {datetime.today()}) ")
+                        chatroomHistory.append(" ")
+                        chatroomHistory.append(f"   {visitorMessage._content} ")
+                        chatroomHistory.append(" ")
+                        chatroomHistory.append(" ")
             except ValueError:
                 return renderTemplate("00004.html", historyChat = chatroomHistory, invalidInput = True)
     else:
@@ -176,5 +181,6 @@ def chatroom():
 # Main
 
 if __name__ == '__main__':
-    #print(chatroomMessageHistoryFile2List())
+    chatroomHistory = chatroomMessageHistoryFile2List()
+    print(chatroomHistory)
     myApp.run(host="0.0.0.0", port=80, debug=True)
