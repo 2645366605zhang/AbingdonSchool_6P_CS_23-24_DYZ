@@ -5,7 +5,7 @@ import math
 
 # FUNCTIONS
 
-def openImg(directory: str) -> Image:
+def getImg(directory: str) -> Image:
     return Image.open(directory)
 
 def imgInfo(image: Image):
@@ -213,16 +213,89 @@ def addCircle(image: Image, r: int, g: int, b: int, circleRadius: int, centerX: 
         raise Exception("Invalid mode")
     return newImage
 
+def getEdge(image: Image, mode: str = "FULL", strength: int = 235) -> Image:
+    mode = mode.upper()
+    modeList = ["FULL", "EDGEWT", "EDGEBK", "EDGER", "EDGEG", "EDGEB"]
+    if not(mode in modeList):
+        raise Exception("Invalid mode")
+    image = modifyImg(image, "GREY")
+    newImage = Image.new("RGB", (image.size))
+    edgeImage = Image.new("RGB", (image.size))
+    pixels = [image.load(), newImage.load(), edgeImage.load()]
+    for y in range(1, newImage.size[1] - 1):
+        for x in range(1, newImage.size[0] - 1):
+            resultPixel = int(0.25 * pixels[0][x - 1, y][0] - 0.25 * pixels[0][x + 1, y][0] + 0.25 * pixels[0][x, y - 1][0] - 0.25 * pixels[0][x, y + 1][0])
+            pixels[1][(x, y)] = (resultPixel + 128, resultPixel + 128, resultPixel + 128)
+            if mode != modeList[0]:
+                if abs(resultPixel) > (255 - strength):
+                    if mode == modeList[1]:
+                        pixels[2][(x, y)] = (255, 255, 255)
+                    elif mode == modeList[2]:
+                        pixels[2][(x, y)] = (0, 0, 0)
+                    elif mode == modeList[3]:
+                        pixels[2][(x, y)] = (255, 0, 0)
+                    elif mode == modeList[4]:
+                        pixels[2][(x, y)] = (0, 255, 0)
+                    elif mode == modeList[5]:
+                        pixels[2][(x, y)] = (0, 0, 255)
+                else:
+                    if mode == modeList[2]:
+                        pixels[2][(x, y)] = (255, 255, 255)
+                    else:
+                        pixels[2][(x, y)] = (0, 0, 0)
+    if mode != modeList[0]:
+        return edgeImage
+    else:
+        return newImage
+
 # MAIN
 
 if __name__ == "__main__":
     imgDir = [
-        "2024Summer/classwork/landscape.png", 
-        "2024Summer/classwork/preston.jpg", 
-        "2024Summer/classwork/abds.jpg", 
-        "2024Summer/classwork/doit.jpg"
+        "landscape.png", 
+        "preston.jpg", 
+        "abds.jpg", 
+        "doit.jpg", 
+        "car.jpg", 
+        "rose1.jpg"
     ]
-    #imgInfo(openImg(imgDir[0]))
-    #addCircle(openImg(imgDir[0]), 255, 255, 255, 128, 128, 128, "EMPTY").show()
-    #stkImg(openImg(imgDir[0]), modifyImg(openImg(imgDir[1]), "GREY"), 20, 20, "STK").show()
-    stkImg(openImg(imgDir[2]), addCircle(openImg(imgDir[3]), 0, 250, 0, 32, 320, 200, "SMALLSOLID"), 0, 0, "STKGB", 192).show()
+    #imgInfo(getImg(imgDir[0]))
+    #addCircle(getImg(imgDir[0]), 255, 255, 255, 128, 128, 128, "EMPTY").show()
+    #stkImg(getImg(imgDir[0]), modifyImg(getImg(imgDir[1]), "GREY"), 20, 20, "STK").show()
+    """stkImg(
+        getImg(
+            imgDir[2]
+        ), 
+        modifyImg(
+            addCircle(
+                getImg(
+                    imgDir[3]
+                ), 
+                0, 
+                250, 
+                0, 
+                32, 
+                320, 
+                200, 
+                "SMALLSOLID"
+            ), 
+            "MIRROR_H"
+        ), 
+        0, 
+        0, 
+        "STKGB", 
+        192
+    ).show()"""
+    stkImg(
+        getEdge(
+            getImg(imgDir[5]), 
+            "EDGER", 
+            253
+        ), 
+        getImg(
+            imgDir[5]
+        ), 
+        0, 
+        0, 
+        "STK"
+    ).show()
