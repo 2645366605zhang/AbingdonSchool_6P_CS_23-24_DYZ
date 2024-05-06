@@ -13,12 +13,18 @@ def saveOtlImage(image: Image, filename: str):
                 file.write(f"{pixels[(x, y)][0]} {pixels[(x, y)][1]} {pixels[(x, y)][2]}\n")
     print(f'Image saved to OTL format.\nSize: {width}×{height}\nFilename: {filename}')
 
-
-def loadOtlImage(filename: str) -> Image:
+"""def loadOtlImage(filename: str) -> Image:
     with open(filename, 'r') as file: metaDataList, pixelData = file.readline().strip().split(' '), file.readlines()[1:]
     width, height = int(metaDataList[0]), int(metaDataList[1])
     for index in range(len(pixelData)): pixelData[index] = tuple(map(int, pixelData[index].strip().split(' ')))
     newImage = Image.new('RGB', (width, height))
+    newImage.putdata(pixelData)
+    return newImage"""
+
+def loadOtlImage(filename: str) -> Image:
+    with open(filename, 'r') as file: metaDataList, pixelData = file.readline().strip().split(' '), file.readlines()[1:]
+    for index in range(len(pixelData)): pixelData[index] = tuple(map(int, pixelData[index].strip().split(' ')))
+    newImage = Image.new('RGB', (int(metaDataList[0]), int(metaDataList[1])))
     newImage.putdata(pixelData)
     return newImage
 
@@ -27,5 +33,5 @@ def loadOtlImage(filename: str) -> Image:
 if __name__ == "__main__":
     #loaded_image = loadOtlImage('image.otl')
     #loaded_image.save('temp.png')
-    saveOtlImage(loadOtlImage('image.otl'), "rkrl.otl")
-    loadOtlImage("rkrl.otl").show()
+    #saveOtlImage(loadOtlImage('image.otl'), "rkrl.otl")
+    loadOtlImage("image.otl").show()

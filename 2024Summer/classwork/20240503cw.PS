@@ -1,0 +1,126 @@
+%!PS
+
+% Set font of strings to be Courier New
+/Courier-New
+  findfont
+75
+  scalefont
+setfont
+
+% X and Y axis scale factor
+0.25 0.25
+  scale
+
+% Move everything 10 10
+10 10
+  translate
+
+% An Unfilled Square
+%newpath
+  %100 100
+    %moveto
+  %200 100
+    %lineto
+  %200 200
+    %lineto
+  %100 200
+    %lineto
+%closepath stroke
+
+% Random Shape
+%newpath
+  %114 514
+    %moveto
+  %514 114
+    %lineto
+  %1919 810
+    %lineto
+  %810 1919
+    %lineto
+%closepath stroke
+
+% Dog Face
+newpath
+  600 800 % A
+    moveto
+  800 700 % B
+    lineto
+  700 500 % C
+    lineto
+  700 200 % D
+    lineto
+  500 0 % E
+    lineto
+  300 0 % F
+    lineto
+  100 200 % G
+    lineto
+  100 500 % H
+    lineto
+  0 700 % I
+    lineto
+  200 800 % J
+    lineto
+  300 700 % K
+    lineto
+  500 700 % L
+    lineto
+closepath stroke
+
+% Dog Face String
+(Hello, I'm a dog)
+  50 950
+    moveto
+show
+
+% Test Calculation: (1000 + 3) * 2 + (54 / 3) = 2024
+1000 3 
+  add 
+2
+  mul
+54 3 
+  div
+  add
+50 1200
+  moveto
+cvi
+(        ) % 8 bits
+cvs
+show
+
+% Test Variable and Function
+/x % Define x as 10
+  10
+def
+
+x 10 % Get x and add it to 10
+  add
+/x % Put /x on stack and switch its position with the previous result
+  exch
+def % Assign the result value to x
+
+x x % Add two x together
+  add
+/y % Put /y on stack and switch its position with the previous result
+  exch
+def % Assign the result value to y
+
+x x % Multiply two x together
+  mul
+y y % Multiply two y together, then add x^2 and y^2 together, then square root the number
+  mul
+  add
+  sqrt
+/result % Put /result on stack and switch its position with the previous result
+  exch
+def % Assign the result value to result
+
+50 1300
+  moveto
+result
+cvi
+(        ) % 8 bits
+cvs
+show
+
+showpage

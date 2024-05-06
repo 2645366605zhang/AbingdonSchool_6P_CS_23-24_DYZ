@@ -1,0 +1,45 @@
+%!PS
+
+/x % Bottom left x-axis coordinate
+  10
+def
+
+/y % Bottom left y-axis coordinate
+  10
+def
+
+/size % half of side length of the triangle
+  100
+def
+
+% Triangle
+newpath
+  x y
+    moveto
+  x size
+    add
+  y size 3
+    sqrt
+    mul
+    add
+    lineto
+  x size 2
+    mul
+    add
+  y
+    lineto
+closepath stroke
+
+% Circle
+x size
+  add
+y size 3
+  sqrt
+  div
+  add
+size 3
+  sqrt div
+0 360
+  arc fill
+
+showpage
