@@ -1,45 +1,59 @@
 %!PS
 
-/x % Bottom left x-axis coordinate
-  10
-def
+/triangleCircleShape {
+  /b % b value of RGB colour
+    exch
+  def
+  /g % g value of RGB colour
+    exch
+  def
+  /r % r value of RGB colour
+    exch
+  def
+  /size % half of side length of the triangle
+    exch
+  def
+  /y % Bottom left y-axis coordinate
+    exch
+  def
+  /x % Bottom left x-axis coordinate
+    exch
+  def
 
-/y % Bottom left y-axis coordinate
-  10
-def
+  % Triangle
+  newpath
+    x y
+      moveto
+    x size
+      add
+    y size 3
+      sqrt
+      mul
+      add
+      lineto
+    x size 2
+      mul
+      add
+    y
+      lineto
+  closepath stroke
 
-/size % half of side length of the triangle
-  100
-def
-
-% Triangle
-newpath
-  x y
-    moveto
+  % Circle
   x size
     add
   y size 3
     sqrt
-    mul
+    div
     add
-    lineto
-  x size 2
-    mul
-    add
-  y
-    lineto
-closepath stroke
+  size 3
+    sqrt div
+  0 360
+    arc 
+  r g b
+  setrgbcolor fill
+} def
 
-% Circle
-x size
-  add
-y size 3
-  sqrt
-  div
-  add
-size 3
-  sqrt div
-0 360
-  arc fill
+10 10 100 1 0 0
+  triangleCircleShape
 
 showpage

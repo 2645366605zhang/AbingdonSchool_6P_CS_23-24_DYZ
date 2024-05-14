@@ -1,3 +1,5 @@
-myLis = ['DYZ (IP: 10.170.10.85)\n', '(Greenwich Time: 2024-02-20 21:38:01.971860)\n', '\n', '   Hello World!\n', '\n', '\n', 'DYZ (IP: 10.170.10.85)\n', '(Greenwich Time: 2024-02-20 21:38:02.665169)\n', '\n', '   Hello World!\n', '\n', '\n', 'DYZ (IP: 10.170.10.85)\n', '(Greenwich Time: 2024-02-20 21:38:03.219179)\n', '\n', '   Hello World!\n', '\n', '\n', 'DYZ (IP: 10.170.10.85)\n', '(Greenwich Time: 2024-02-20 21:38:06.331179)\n', '\n', '   Hello World!\n', '\n', '\n']
 
-print("DYZ (IP: 10.170.10.85)\n" in myLis)
+space = 8
+
+txt = f"We have {f"{space}":^{space}} chickens."
+print(txt)
