@@ -1,5 +1,7 @@
 
-space = 8
 
-txt = f"We have {f"{space}":^{space}} chickens."
-print(txt)
+myDict = {"f":1, "c":2}
+
+for v in myDict: print(v)
+
+for v in list(myDict.keys()): print(v)

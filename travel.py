@@ -10,29 +10,99 @@ from code_repo.locationLevel import LocationLevel, locationLevels
 
 # CLASSES
 
-class InterFace:
+class Interface:
 
     def __init__(self) -> None:
+        self._mapDict: dict[str, TravelMap | CartesianMap] = {} # Dictionary containing all maps, with an "identifier" as key of each map
+        self._currentInterface = "default"
         self.Main()
 
     def Main(self) -> None:
+        self.Initialize()
         while True:
-            pass
+            os.system("cls") # Clears the console
+            if self._currentInterface == "mainmenu":
+                self.ShowMainMenu()
+            elif self._currentInterface == "mapmenu":
+                self.ShowMapMenu()
+            elif self._currentInterface == "mapsetmenu":
+                self.ShowMapsetMenu()
+            self.ProceedUserOption()
     
-    def ShowStart(self) -> None:
-        pass
+    def Initialize(self) -> None:
+        usrChoice = input('Would you like to load a mapset?\nEnter "L" to load, other input to proceed.\n').upper()
+        if usrChoice == "L":
+            while True:
+                mapsetLoaded = self.LoadMapset(input("Please enter the identifier of the mapset you would like to load: "))
+                if mapsetLoaded:
+                    break
+        self._currentInterface = "mainmenu"
+
+    def ShowMainMenu(self) -> None:
+        print(f"MAP ORGANIZER   Ver_0.0.1\n\n{self.GetMapString()}\n\n(C)reate map, (S)ave map, (L)oad map, (D)elete map, (M)apset options, (Q)uit\n")
 
     def ShowMapMenu(self) -> None:
         pass
 
-    def CreateMap(self) -> None:
+    def ShowMapsetMenu(self) -> None:
         pass
+
+    def ProceedUserOption(self) -> None:
+        userChoice = input().upper()
+        if self._currentInterface == "mainmenu":
+            if userChoice == "C":
+                identifier = input('Please enter the indentifier of the new map, enter "Cancel" to cancel: ')
+                name = input('Please enter the name of the new map, enter "Cancel" to cancel: ')
+                xSize = int(input('Please enter the x-Size of the new map in integer, enter "Cancel" to cancel: '))
+                ySize = int(input('Please enter the y-size of the new map in integer, enter "Cancel" to cancel: '))
+                distance = float(input('Please enter the distance between two "blocks" for the new map in number of unit, enter "Cancel" to cancel: '))
+                self.CreateCartesianMap(identifier, name, xSize, ySize, distance)
+            elif userChoice == "S":
+                pass
+            elif userChoice == "L":
+                pass
+            elif userChoice == "D":
+                pass
+            elif userChoice == "M":
+                pass
+            elif userChoice == "Q":
+                pass
+        elif self._currentInterface == "mapmenu":
+            pass
+        elif self._currentInterface == "mapsetmenu":
+            pass
+
+    def CreateCartesianMap(self, identifier: str, name: str, xSize: int, ySize: int, distance: int | float) -> None:
+        self._mapDict[identifier] = CartesianMap(name, xSize, ySize, distance)
+
+    def RemoveMap(self, identifier: str) -> TravelMap | CartesianMap:
+        return self._mapDict.pop(identifier)
 
     def SaveMap(self) -> None:
         pass
 
     def LoadMap(self) -> None:
         pass
+
+    def saveMapset(self) -> None:
+        pass
+
+    def LoadMapset(self) -> bool:
+        pass
+
+    def GetMapString(self) -> str:
+        if len(self._mapDict) == 0: return "There isn't any map yet.\nConsider create or load one?"
+        mapStringList = []
+        maxMapNameLength = 8 # Length of string "Map Name"
+        maxIdentifierLength = 10 # Length of string "Identifier"
+        for map in self._mapDict:
+            if len(self._mapDict[map].GetName()) > maxMapNameLength: maxMapNameLength = len(self._mapDict[map].GetName())
+        for identifier in self._mapDict:
+            if len(identifier) > maxIdentifierLength: maxIdentifierLength = len(identifier)
+        for map in self._mapDict:
+            mapStringList.append(f"{f"{map}":<{maxIdentifierLength}} | {f"{self._mapDict[map].GetName()}":<{maxMapNameLength}}")
+        mapStringList.insert(0, f"{"Identifier":<{maxIdentifierLength}} | {"Map Name":<{maxMapNameLength}}\n")
+        return "\n".join(mapStringList)
 
 class Person:
 
@@ -284,7 +354,7 @@ class Location(Node):
 # FUNCTIONS
 
 def Main():
-    pass
+    mainInterface = Interface()
 
 # MAIN
 
@@ -292,7 +362,7 @@ Main()
 
 # TEST
 
-if __name__ == "__main__":
+if __name__ != "__main__":
     """testMap = TravelMap("Abingdon School")
     testMap.AddLocation("Amey Theatre") # 0
     testMap.AddLocation("Big School") # 1

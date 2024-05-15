@@ -69,10 +69,11 @@ class Breakthrough():
                     elif MenuChoice == "Q":
                         quitConfim = input("Are you sure you want to quit? y/n:> ").upper()
                         if quitConfim == "Y":
+                            self.__Score += self.__Deck.GetNumberOfCards()
                             self.__QuitGame = True
                             self.__GameOver = True
                         else:
-                            self.__notification = "Phew! 'twas a mistype isn't it?"
+                            self.__notification = "Phew! 'twas a mistype innit?"
                     if self.__CurrentLock.GetLockSolved():
                         self.__LockSolved = True
                         self.__ProcessLockSolved()
@@ -213,6 +214,7 @@ class Breakthrough():
                 print("Difficulty encountered!")
                 print(self.__Hand.GetCardDisplay())
                 print("To deal with this you need to either lose a key ", end='')
+                print(self.__Deck.DisplayStats())
                 Choice = input("(enter 1-5 to specify position of key) or (D)iscard five cards from the deck:> ")
                 print()
                 self.__Discard.AddCard(CurrentCard)
@@ -468,6 +470,9 @@ class CardCollection():
     def __init__(self, N):
         self._Name = N
         self._Cards = []
+        self._NumPicks = 0
+        self._NumFiles = 0
+        self._NumKeys = 0
 
     def GetName(self):
         return self._Name
@@ -480,8 +485,9 @@ class CardCollection():
 
     def AddCard(self, C):
         self._Cards.append(C)
+        self.UpdateNum()
     
-    def GetNumberOfCards(self): 
+    def GetNumberOfCards(self) -> int:
         return len(self._Cards)
 
     def Shuffle(self):
@@ -499,6 +505,7 @@ class CardCollection():
                 CardFound = True
                 self._Cards.pop(Pos)
             Pos += 1
+        self.UpdateNum()
         return CardToGet
 
     def __CreateLineOfDashes(self, Size):
@@ -514,7 +521,7 @@ class CardCollection():
         else:
             CardDisplay += "\n" + "\n"
         LineOfDashes = ""
-        CARDS_PER_LINE  = 10
+        CARDS_PER_LINE = 10
         if len(self._Cards) > CARDS_PER_LINE:
             LineOfDashes = self.__CreateLineOfDashes(CARDS_PER_LINE)
         else:
@@ -535,6 +542,24 @@ class CardCollection():
                 LineOfDashes = self.__CreateLineOfDashes(len(self._Cards) % CARDS_PER_LINE)
             CardDisplay += LineOfDashes + "\n"
         return CardDisplay
+    
+    def UpdateNum(self):
+        if len(self._Cards) == 0:
+            self._NumPicks = 0
+            self._NumFiles = 0
+            self._NumKeys = 0
+        else:
+            for card in self._Cards:
+                if card.GetDescription()[0] == "K":
+                    self._NumKeys += 1
+                elif card.GetDescription()[0] == "F":
+                    self._NumFiles += 1
+                elif card.GetDescription()[0] == "P":
+                    self._NumPicks += 1
+
+    
+    def DisplayStats(self) -> str:
+        return f"There is a {round((self.GetNumberOfCards() / self._NumKeys() * 100), 2)}% chance that the next card will be a key, a {round((self.GetNumberOfCards() / self._NumFiles() * 100), 2)}% chance that it will be a file and a {round((self.GetNumberOfCards() / self._NumPicks() * 100), 2)}% chance that it will be a pick.\n"
 
 if __name__ == "__main__":
     Main()
