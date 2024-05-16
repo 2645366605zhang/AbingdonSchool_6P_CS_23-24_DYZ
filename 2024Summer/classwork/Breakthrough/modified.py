@@ -66,6 +66,9 @@ class Breakthrough():
                     elif MenuChoice == "M" and not(self.__MulliganUsed):
                         self.__MulliganUsed = True
                         self.__Mulligan()
+                    elif MenuChoice == "S":
+                        saveDirectory = input("Please enter the name you want to save as:> ")
+                        self.__SaveGame(saveDirectory)
                     elif MenuChoice == "Q":
                         quitConfim = input("Are you sure you want to quit? y/n:> ").upper()
                         if quitConfim == "Y":
@@ -102,7 +105,8 @@ class Breakthrough():
     def __SetupGame(self):
         Choice = input("Enter L to load a game from a file, anything else to play a new game:> ").upper()
         if Choice == "L":
-            if not self.__LoadGame("game1.txt"):
+            saveName = input("Enter the name of the save file you want to load(without filename extension):> ")
+            if not self.__LoadGame(f"save/{saveName}.sav"):
                 self.__GameOver = True
         else:
             self.__CreateStandardDeck()
@@ -165,21 +169,21 @@ class Breakthrough():
             if SplitLine[Count] == "Y":
                 self.__CurrentLock.SetChallengeMet(Count, True)
     
-    def __LoadGame(self, FileName):
+    def __LoadGame(self, FileName: str) -> bool:
         try:
             with open(FileName) as f:          
-                LineFromFile = f.readline().rstrip()
+                LineFromFile = f.readline().rstrip() # Line 1
                 self.__Score = int(LineFromFile)
-                LineFromFile = f.readline().rstrip()
-                LineFromFile2 = f.readline().rstrip()
+                LineFromFile = f.readline().rstrip() # Line 2
+                LineFromFile2 = f.readline().rstrip() # Line 3
                 self.__SetupLock(LineFromFile, LineFromFile2)
-                LineFromFile = f.readline().rstrip()
+                LineFromFile = f.readline().rstrip() # Line 4
                 self.__SetupCardCollectionFromGameFile(LineFromFile, self.__Hand)
-                LineFromFile = f.readline().rstrip()
+                LineFromFile = f.readline().rstrip() # Line 5
                 self.__SetupCardCollectionFromGameFile(LineFromFile, self.__Sequence)
-                LineFromFile = f.readline().rstrip()
+                LineFromFile = f.readline().rstrip() # Line 6
                 self.__SetupCardCollectionFromGameFile(LineFromFile, self.__Discard)
-                LineFromFile = f.readline().rstrip()
+                LineFromFile = f.readline().rstrip() # Line 7
                 self.__SetupCardCollectionFromGameFile(LineFromFile, self.__Deck)
                 return True
         except:
@@ -213,7 +217,7 @@ class Breakthrough():
                 print()
                 print("Difficulty encountered!")
                 print(self.__Hand.GetCardDisplay())
-                print("To deal with this you need to either lose a key ", end='')
+                print("To deal with this you need to either lose a key or discard all the cards in your hand", end='')
                 print(self.__Deck.DisplayStats())
                 Choice = input("(enter 1-5 to specify position of key) or (D)iscard five cards from the deck:> ")
                 print()
@@ -248,7 +252,7 @@ class Breakthrough():
             prompt += ", (P)eek"
         if not(self.__MulliganUsed):
             prompt += ", (M)ulligan"
-        Choice = input(f"{prompt}, (Q)uit:> ").upper()
+        Choice = input(f"{prompt}, (S)ave, (Q)uit:> ").upper()
         return Choice
     
     def __GetDeck(self):
@@ -302,7 +306,7 @@ class Breakthrough():
                 ToCollection.AddCard(CardToMove)
         return Score
     
-    def __Mulligan(self):
+    def __Mulligan(self) -> None:
         for index in range(self.__GetHand().GetNumberOfCards()):
             self.__MoveCard(self.__GetHand(), self.__GetDeck(), self.__GetHand().GetCardNumberAt(0))
         for index in range(self.__GetSequence().GetNumberOfCards()):
@@ -316,6 +320,23 @@ class Breakthrough():
             self.__MoveCard(self.__GetDeck(), self.__GetHand(), self.__GetDeck().GetCardNumberAt(0))
         self.__notification = "You have used Mulligan!"
 
+    def __SaveGame(self, saveDirectory: str) -> None:
+        saveDataList = [str(self.__Score), "\n", self.__CurrentLock.GetChallengeString(), self.__GetHand().GetCardString(), self.__GetSequence().GetCardString(), self.__GetDiscard().GetCardString(), self.__GetDeck().GetCardString()]
+        with open(f"save/{saveDirectory}.sav", "w") as saveFile:
+            saveFile.writelines(saveDataList)
+
+
+    def TestS(self):
+        self.__SetupGame()
+        print(self.__CurrentLock.GetChallengeString())
+        print(self.__Hand.GetCardString())
+        self.__SaveGame("testtest")
+
+    def TestL(self):
+        self.__SetupGame()
+        print(self.__CurrentLock.GetChallengeString())
+        print(self.__Hand.GetCardString())
+
 class Challenge():
     def __init__(self):
         self._Met = False
@@ -323,6 +344,12 @@ class Challenge():
     
     def GetMet(self): 
         return self._Met
+    
+    def GetMetString(self) -> str:
+        if self.GetMet():
+            return "Y"
+        else:
+            return "N"
 
     def GetCondition(self):
         return self._Condition
@@ -388,6 +415,13 @@ class Lock():
     
     def GetNumberOfChallenges(self): 
         return len(self._Challenges)
+    
+    def GetChallengeString(self):
+        challengeDescList = []
+        challengeStatList = []
+        for challenge in self._Challenges: challengeDescList.append(",".join(challenge.GetCondition()))
+        for challenge in self._Challenges: challengeStatList.append(challenge.GetMetString())
+        return f"{";".join(challengeDescList)}\n{";".join(challengeStatList)}\n"
 
 class Card():
     _NextCardNumber = 0
@@ -543,23 +577,20 @@ class CardCollection():
             CardDisplay += LineOfDashes + "\n"
         return CardDisplay
     
-    def UpdateNum(self):
-        if len(self._Cards) == 0:
-            self._NumPicks = 0
-            self._NumFiles = 0
-            self._NumKeys = 0
-        else:
-            for card in self._Cards:
-                if card.GetDescription()[0] == "K":
-                    self._NumKeys += 1
-                elif card.GetDescription()[0] == "F":
-                    self._NumFiles += 1
-                elif card.GetDescription()[0] == "P":
-                    self._NumPicks += 1
-
+    def GetCardString(self) -> str:
+        cardStringList = []
+        for card in self._Cards: cardStringList.append(f"{card.GetDescription()} {card.GetCardNumber()}")
+        return f"{",".join(cardStringList)}\n"
     
+    def UpdateNum(self):
+        self._NumPicks, self._NumFiles, self._NumKeys = 0, 0, 0
+        for card in self._Cards:
+            if card.GetDescription()[0] == "K": self._NumKeys += 1
+            elif card.GetDescription()[0] == "F": self._NumFiles += 1
+            elif card.GetDescription()[0] == "P": self._NumPicks += 1
+
     def DisplayStats(self) -> str:
-        return f"There is a {round((self.GetNumberOfCards() / self._NumKeys() * 100), 2)}% chance that the next card will be a key, a {round((self.GetNumberOfCards() / self._NumFiles() * 100), 2)}% chance that it will be a file and a {round((self.GetNumberOfCards() / self._NumPicks() * 100), 2)}% chance that it will be a pick.\n"
+        return f"\nThere is a {round(((self._NumKeys / self.GetNumberOfCards()) * 100), 2)}% chance that the next card will be a key, a {round(((self._NumFiles / self.GetNumberOfCards()) * 100), 2)}% chance that it will be a file and a {round(((self._NumPicks / self.GetNumberOfCards()) * 100), 2)}% chance that it will be a pick.\n"
 
 if __name__ == "__main__":
     Main()
