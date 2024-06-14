@@ -69,6 +69,7 @@ class Breakthrough():
                     elif MenuChoice == "S":
                         saveDirectory = input("Please enter the name you want to save as:> ")
                         self.__SaveGame(saveDirectory)
+                        self.__notification = f"Game saved at {f"save/{saveDirectory}.sav"}!"
                     elif MenuChoice == "Q":
                         quitConfim = input("Are you sure you want to quit? y/n:> ").upper()
                         if quitConfim == "Y":
@@ -89,6 +90,7 @@ class Breakthrough():
         print("Lock has been solved. Your score is now:", self.__Score)
         while self.__Discard.GetNumberOfCards() > 0:
             self.__MoveCard(self.__Discard, self.__Deck, self.__Discard.GetCardNumberAt(0))
+        self.__TryAddGeniusCardToDeck()
         self.__Deck.Shuffle()
         self.__CurrentLock = self.__GetRandomLock()
 
@@ -114,6 +116,7 @@ class Breakthrough():
             for Count in range(5):
                 self.__MoveCard(self.__Deck, self.__Hand, self.__Deck.GetCardNumberAt(0))
             self.__AddDifficultyCardsToDeck()
+            self.__TryAddGeniusCardToDeck()
             self.__Deck.Shuffle()
             self.__CurrentLock = self.__GetRandomLock()
     
@@ -214,19 +217,32 @@ class Breakthrough():
         if self.__Deck.GetNumberOfCards() > 0:
             if self.__Deck.GetCardDescriptionAt(0) == "Dif":
                 CurrentCard = self.__Deck.RemoveCard(self.__Deck.GetCardNumberAt(0))
-                print()
-                print("Difficulty encountered!")
+                print("\nDifficulty encountered!")
                 print(self.__Hand.GetCardDisplay())
                 print("To deal with this you need to either lose a key or discard all the cards in your hand", end='')
                 print(self.__Deck.DisplayStats())
                 Choice = input("(enter 1-5 to specify position of key) or (D)iscard five cards from the deck:> ")
-                print()
                 self.__Discard.AddCard(CurrentCard)
                 CurrentCard.Process(self.__Deck, self.__Discard, self.__Hand, self.__Sequence, self.__CurrentLock, Choice, CardChoice)
+            elif self.__Deck.GetCardDescriptionAt(0) == "Gen":
+                CurrentCard = self.__Deck.RemoveCard(self.__Deck.GetCardNumberAt(0))
+                print("\nGenius encountered!\nYou can choose to either solve a challenge immediatly or discard this genius card!")
+                validChoice = False
+                while not(validChoice):
+                    choice = input("(enter the ID of the challenge you wish to solve) or (D)iscard the genius card:> ").strip().upper()
+                    if choice == "D":
+                        validChoice = True
+                        self.__Discard.AddCard(CurrentCard)
+                    elif choice in "".join(range(1, self.__CurrentLock.GetNumberOfChallenges() + 1)):
+                        validChoice = True
+                        self.__CurrentLock.SetChallengeMet(int(choice) - 1, True)
         while self.__Hand.GetNumberOfCards() < 5 and self.__Deck.GetNumberOfCards() > 0:
             if self.__Deck.GetCardDescriptionAt(0) == "Dif":
                 self.__MoveCard(self.__Deck, self.__Discard, self.__Deck.GetCardNumberAt(0))
-                print("A difficulty card was discarded from the deck when refilling the hand.")
+                self.__notification = "A difficulty card was discarded from the deck when refilling the hand."
+            elif self.__Deck.GetCardDescriptionAt(0) == "Gen":
+                self.__MoveCard(self.__Deck, self.__Discard, self.__Deck.GetCardNumberAt(0))
+                self.__notification = "A genius card was discarded from the deck when refilling the hand."
             else:
                 self.__MoveCard(self.__Deck, self.__Hand, self.__Deck.GetCardNumberAt(0))
         if self.__Deck.GetNumberOfCards() == 0 and self.__Hand.GetNumberOfCards() < 5:
@@ -325,6 +341,9 @@ class Breakthrough():
         with open(f"save/{saveDirectory}.sav", "w") as saveFile:
             saveFile.writelines(saveDataList)
 
+    def __TryAddGeniusCardToDeck(self):
+        if random.randint(0, 3) == 0:
+            self.__Deck.AddCard(GeniusCard())
 
     def TestS(self):
         self.__SetupGame()
@@ -499,6 +518,15 @@ class DifficultyCard(Card):
             CardToMove = Deck.RemoveCard(Deck.GetCardNumberAt(0))
             Discard.AddCard(CardToMove)
             Count += 1
+
+class GeniusCard(Card):
+
+    def __init__(self):
+        self._CardType = "Gen"
+        super.__init__()
+
+    def GetDescription(self):
+        return self._CardType
 
 class CardCollection():
     def __init__(self, N):

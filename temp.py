@@ -1,7 +1,3 @@
+from random import randint
 
-
-myDict = {"f":1, "c":2}
-
-for v in myDict: print(v)
-
-for v in list(myDict.keys()): print(v)
+print(randint(1, 20))

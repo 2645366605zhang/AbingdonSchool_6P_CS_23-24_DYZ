@@ -53,12 +53,39 @@ class Interface:
             if userChoice == "C":
                 identifier = input('Please enter the indentifier of the new map, enter "Cancel" to cancel: ')
                 name = input('Please enter the name of the new map, enter "Cancel" to cancel: ')
-                xSize = int(input('Please enter the x-Size of the new map in integer, enter "Cancel" to cancel: '))
-                ySize = int(input('Please enter the y-size of the new map in integer, enter "Cancel" to cancel: '))
-                distance = float(input('Please enter the distance between two "blocks" for the new map in number of unit, enter "Cancel" to cancel: '))
+                while True:
+                    try:
+                        xSize = int(input('Please enter the x-Size of the new map in integer, enter "Cancel" to cancel: '))
+                        ySize = int(input('Please enter the y-size of the new map in integer, enter "Cancel" to cancel: '))
+                        break
+                    except ValueError: print("Invalid value, please try again.")
+                while True:
+                    try:
+                        distance = float(input('Please enter the distance between two "blocks" for the new map in number of unit, enter "Cancel" to cancel: '))
+                        break
+                    except ValueError: print("Invalid value, please try again.")
                 self.CreateCartesianMap(identifier, name, xSize, ySize, distance)
             elif userChoice == "S":
-                pass
+                os.makedirs("mapSave", exist_ok = True)
+                while True:
+                    try:
+                        targetMapIdentifier = input("Please enter the identifier of the map you want to save: ")
+                        targetMap = self._mapDict[targetMapIdentifier]
+                        break
+                    except KeyError: print("Identifier doesn't exist, please try again.")
+                mapSaveName = input("Please enter the name of the file you want to save to: ")
+                if os.path.isfile(f"mapSave/{mapSaveName}.map"):
+                    if not(input("A file with the same name already exists, proceed to overwrite? (y/n): ").upper() == "Y"): return
+                with open(f"mapSave/{mapSaveName}.map", "w", encoding = "utf-8") as currentSaveFile:
+                    currentSaveFile.write(f"{targetMapIdentifier}\n")
+                    currentSaveFile.write(f"{targetMap.GetName()}\n")
+                    currentSaveFile.write(f"{targetMap.GetXSize()} {targetMap.GetYSize()}\n")
+                    currentSaveFile.write(f"{targetMap.GetCoordinateDistance()}\n")
+                    currentSaveFile.write(f"{targetMap.GetMaxDigit()}\n")
+                    for locationIndex in range(len(targetMap.GetLocationList())):
+                        print(f"\nstr(targetMap.GetLocationList()[locationIndex]): {str(targetMap.GetLocationList()[locationIndex])}\ntargetMap.GetLocationList()[locationIndex].GetLevel().GetLocalization(): {targetMap.GetLocationList()[locationIndex].GetLevel().GetLocalization()}\n")
+                        currentSaveFile.write(f"{str(targetMap.GetLocationList()[locationIndex])} {targetMap.GetLocationList()[locationIndex].GetLevel().GetLocalization()}\n")
+                    # TBD
             elif userChoice == "L":
                 pass
             elif userChoice == "D":
@@ -128,7 +155,8 @@ class TravelMap:
 
     def __init__(self, name: str) -> None:
         self._name = name
-        self._locationList = []
+        self._maxDigit = -1
+        self._locationList: Location = []
     
     def GetName(self) -> str:
         return self._name
@@ -138,6 +166,9 @@ class TravelMap:
     
     def GetLocation(self, index: int) -> Location:
         return self._locationList[index]
+    
+    def GetLocationList(self) -> list:
+        return self._locationList
     
     def AddLocation(self, name: str = "Default", levelIdentifier: str = "NML") -> int: # Add a "Location" onto the map
         if name == "Default":
@@ -211,6 +242,18 @@ class CartesianMap(TravelMap):
                     self._maxDigit = len(str(self._coordinateList[x][y]))
         self.UpdateLink()
     
+    def GetXSize(self) -> int:
+        return self._xSize
+    
+    def GetYSize(self) -> int:
+        return self._ySize
+
+    def GetCoordinateDistance(self) -> int | float:
+        return self._coordinateDistance
+
+    def GetMaxDigit(self) -> int:
+        return self._maxDigit
+
     def UpdateLink(self) -> None:
         # Clear all routes between all Locations
         for x in range(self._xSize):
@@ -314,7 +357,7 @@ class CartesianMap(TravelMap):
 
     def AddPerson(self, position: int, name: str, symbol: str):
         self._personDict[position] = Person(position, name, symbol)
-        print(self._personDict)
+        #print(self._personDict)
     
     def GetNumberOfPerson(self) -> int:
         return len(self._personDict)
@@ -358,11 +401,11 @@ def Main():
 
 # MAIN
 
-Main()
+#Main()
 
 # TEST
 
-if __name__ != "__main__":
+if __name__ == "__main__":
     """testMap = TravelMap("Abingdon School")
     testMap.AddLocation("Amey Theatre") # 0
     testMap.AddLocation("Big School") # 1

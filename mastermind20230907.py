@@ -2,16 +2,16 @@ import math
 import random
 import os
 
-localDirection = os.path.dirname(__file__)
-relativeDirection = "txtfile/mastermind/scoreboard.txt"
-scoreboardDirection = os.path.join(localDirection, relativeDirection)
+LOCAL_DIR = os.path.dirname(__file__)
+RELATIVE_DIR = "txtfile/mastermind/scoreboard.txt"
+FINAL_DIR = os.path.join(LOCAL_DIR, RELATIVE_DIR)
 
 legacyScore = [] #Score will be (100-tries)*difficulty(0.75 for easy, 1 for normal, 1.2 for hard) rounded down to an integer
 debugMode = False
 
 def readScoreboard(scoreboard):
     try:
-        scoreboardFile = open(scoreboardDirection, "r", encoding = "utf-8")
+        scoreboardFile = open(FINAL_DIR, "r", encoding = "utf-8")
         for line in scoreboardFile:
             dataList = line.split("|")
             name = dataList[0]
@@ -24,7 +24,7 @@ def readScoreboard(scoreboard):
     return scoreboard
 
 def writeScoreboard():
-    scoreboardFile = open(scoreboardDirection, "w", encoding = "utf-8")
+    scoreboardFile = open(FINAL_DIR, "w", encoding = "utf-8")
     for record in legacyScore:
         scoreboardFile.write(record[0])
         scoreboardFile.write("|")
