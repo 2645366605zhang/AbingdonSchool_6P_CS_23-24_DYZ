@@ -60,6 +60,17 @@ def Dec2B26(decNum: int) -> str:
             decNum = decNum // 26
     return resultString
 
+def Dec2B32(decNum: int) -> str:
+    resultString = ""
+    digitString = "0123456789ABCDEFGHIJKLMNOPQRSTUV"
+    while True:
+        if decNum == 0:
+            break
+        else:
+            resultString = f"{digitString[decNum % 32]}" + resultString
+            decNum = decNum // 32
+    return resultString
+
 def Dec2B36(decNum: int) -> str:
     resultString = ""
     digitString = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -131,7 +142,7 @@ def Dec2BAny(baseNum: int, decNum: int) -> str:
 # Main
 
 if __name__ == "__main__":
-    myNum = 17
+    myNum = 114514
     #print(Dec2Bin(mynum))
     #mynum = Dec2Bin(mynum)
     #print(Bin2Dec(mynum))
@@ -140,10 +151,11 @@ if __name__ == "__main__":
     print(f"\nBase 16: \n{Dec2Hex(myNum)}\n")
     print(f"\nBase 22: \n{Dec2B22(myNum)}\n")
     print(f"\nBase 26: \n{Dec2B26(myNum)}\n")
+    print(f"\nBase 32: \n{Dec2B32(myNum)}\n")
     print(f"\nBase 36: \n{Dec2B36(myNum)}\n")
     print(f"\nBase 42: \n{Dec2B42(myNum)}\n")
     print(f"\nBase 64: \n{Dec2B64(myNum)}\n")
     print(f"\nBase 94: \n{Dec2B94(myNum)}\n")
     print(f"\nBase 122: \n{Dec2B122(myNum)}\n")
-    print(f"\nBase {myNum}: \n{Dec2BAny(myNum, myNum)}\n")
+   #print(f"\nBase {myNum}: \n{Dec2BAny(myNum, myNum)}\n")
     

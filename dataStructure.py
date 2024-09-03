@@ -12,7 +12,7 @@ class Empty(Exception):
 
 class ArrayQueue:
 
-    def __init__(self, maxLength):
+    def __init__(self, maxLength: int):
         self._data = []
         self._maxLength = maxLength
 

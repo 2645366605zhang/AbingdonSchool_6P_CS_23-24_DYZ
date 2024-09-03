@@ -45,4 +45,4 @@ def tryConstructWord(targetletterList, materialLetterList):
 # Main
 
 if __name__ == "__main__":
-    main("Nine", "Elephantine")
+    print(main("Nine", "Elephantine"))

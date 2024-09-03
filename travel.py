@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 import os
-from math import sqrt, pi
+from math import sqrt
 from code_repo.dataStructure import GraphNode as Node
 from code_repo.locationLevel import LocationLevel, locationLevels
 
@@ -424,7 +424,7 @@ if __name__ == "__main__":
     navigationResult = testMap.Navigate(0, 6)
     print(f'In map "{testMap.GetName()}", such route exists:\nRoute Length: {round(navigationResult[0], 2)}\nRoute Detail: {navigationResult[1]}')"""
 
-    testMap = CartesianMap("CMap", 4, 5, 1)
+    testMap = CartesianMap("CMap", 7, 3, 1)
     testMap.SetLevel(6, "WAL")
     testMap.SetLevel(7, "WAL")
     testMap.SetLevel(8, "COV")

@@ -286,7 +286,7 @@ if __name__ == "__main__":
         "STKGB", 
         192
     ).show()"""
-    stkImg(
+    """stkImg(
         getEdge(
             getImg(
                 imgDir[5]
@@ -300,4 +300,4 @@ if __name__ == "__main__":
         0, 
         0, 
         "STK"
-    ).show()
+    ).show()"""

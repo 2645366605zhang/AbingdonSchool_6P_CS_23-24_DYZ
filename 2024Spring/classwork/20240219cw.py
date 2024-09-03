@@ -62,4 +62,5 @@ def dec2FPBin(decNum: float, maxDP: int = 1024) -> str:
 # Main
 
 if __name__ == "__main__":
-    print(dec2FPBin(sqrt(2), 4096))
+    #print(dec2FPBin(sqrt(2), 1024))
+    print(dec2FPBin(114.514, 1024))

@@ -1,6 +1,5 @@
 # Imports
 import os
-import fileinput
 
 # Constants
 localDirection = os.path.dirname(__file__)
