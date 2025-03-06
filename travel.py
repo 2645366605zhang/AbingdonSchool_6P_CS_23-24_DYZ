@@ -21,11 +21,11 @@ class Interface:
         self.Initialize()
         while True:
             os.system("cls") # Clears the console
-            if self._currentInterface == "mainmenu":
+            if self._currentInterface == "mainMenu":
                 self.ShowMainMenu()
-            elif self._currentInterface == "mapmenu":
+            elif self._currentInterface == "mapMenu":
                 self.ShowMapMenu()
-            elif self._currentInterface == "mapsetmenu":
+            elif self._currentInterface == "mapsetMenu":
                 self.ShowMapsetMenu()
             self.ProceedUserOption()
     
@@ -36,7 +36,7 @@ class Interface:
                 mapsetLoaded = self.LoadMapset(input("Please enter the identifier of the mapset you would like to load: "))
                 if mapsetLoaded:
                     break
-        self._currentInterface = "mainmenu"
+        self._currentInterface = "mainMenu"
 
     def ShowMainMenu(self) -> None:
         print(f"MAP ORGANIZER   Ver_0.0.1\n\n{self.GetMapString()}\n\n(C)reate map, (S)ave map, (L)oad map, (D)elete map, (M)apset options, (Q)uit\n")
@@ -49,7 +49,7 @@ class Interface:
 
     def ProceedUserOption(self) -> None:
         userChoice = input().upper()
-        if self._currentInterface == "mainmenu":
+        if self._currentInterface == "mainMenu":
             if userChoice == "C":
                 identifier = input('Please enter the indentifier of the new map, enter "Cancel" to cancel: ')
                 name = input('Please enter the name of the new map, enter "Cancel" to cancel: ')
@@ -94,9 +94,9 @@ class Interface:
                 pass
             elif userChoice == "Q":
                 pass
-        elif self._currentInterface == "mapmenu":
+        elif self._currentInterface == "mapMenu":
             pass
-        elif self._currentInterface == "mapsetmenu":
+        elif self._currentInterface == "mapsetMenu":
             pass
 
     def CreateCartesianMap(self, identifier: str, name: str, xSize: int, ySize: int, distance: int | float) -> None:
@@ -409,7 +409,7 @@ if __name__ == "__main__":
     """testMap = TravelMap("Abingdon School")
     testMap.AddLocation("Amey Theatre") # 0
     testMap.AddLocation("Big School") # 1
-    testMap.AddLocation("Cresent House") # 2
+    testMap.AddLocation("Crescent House") # 2
     testMap.AddLocation("DT Department") # 3
     testMap.AddLocation("Economics Classroom") # 4
     testMap.AddLocation("Faringdon Lodge") # 5
@@ -421,7 +421,7 @@ if __name__ == "__main__":
     testMap.LinkLocation(1, 4, 4)
     testMap.LinkLocation(1, 5, 3)
     testMap.LinkLocation(2, 5, 2.5)
-    navigationResult = testMap.Navigate(0, 6)
+    navigationResult = testMap.Navigate(3, 5)
     print(f'In map "{testMap.GetName()}", such route exists:\nRoute Length: {round(navigationResult[0], 2)}\nRoute Detail: {navigationResult[1]}')"""
 
     testMap = CartesianMap("CMap", 7, 3, 1)
