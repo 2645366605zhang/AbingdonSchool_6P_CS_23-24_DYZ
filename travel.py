@@ -1,442 +1,430 @@
-# IMPORTS
-
 from __future__ import annotations
 import os
 from math import sqrt
+from typing import Any, Dict, List
 from code_repo.dataStructure import GraphNode as Node
 from code_repo.locationLevel import LocationLevel, locationLevels
 
-# CONSTANTS
-
-# CLASSES
-
 class Interface:
-
     def __init__(self) -> None:
-        self._mapDict: dict[str, TravelMap | CartesianMap] = {} # Dictionary containing all maps, with an "identifier" as key of each map
-        self._currentInterface = "default"
-        self.Main()
+        self._map_dict: Dict[str, "TravelMap | CartesianMap"] = {}
+        self._current_interface: str = "default"
+        self.main()
 
-    def Main(self) -> None:
-        self.Initialize()
+    def main(self) -> None:
+        self.initialize()
         while True:
-            os.system("cls") # Clears the console
-            if self._currentInterface == "mainMenu":
-                self.ShowMainMenu()
-            elif self._currentInterface == "mapMenu":
-                self.ShowMapMenu()
-            elif self._currentInterface == "mapsetMenu":
-                self.ShowMapsetMenu()
-            self.ProceedUserOption()
-    
-    def Initialize(self) -> None:
-        usrChoice = input('Would you like to load a mapset?\nEnter "L" to load, other input to proceed.\n').upper()
-        if usrChoice == "L":
+            os.system("cls")
+            if self._current_interface == "mainMenu":
+                self.show_main_menu()
+            elif self._current_interface == "mapMenu":
+                self.show_map_menu()
+            elif self._current_interface == "mapsetMenu":
+                self.show_mapset_menu()
+            self.proceed_user_option()
+
+    def initialize(self) -> None:
+        usr_choice = input('Would you like to load a mapset?\nEnter "L" to load, other input to proceed.\n').upper()
+        if usr_choice == "L":
             while True:
-                mapsetLoaded = self.LoadMapset(input("Please enter the identifier of the mapset you would like to load: "))
-                if mapsetLoaded:
+                mapset_loaded = self.load_mapset(input("Please enter the identifier of the mapset you would like to load: "))
+                if mapset_loaded:
                     break
-        self._currentInterface = "mainMenu"
+        self._current_interface = "mainMenu"
 
-    def ShowMainMenu(self) -> None:
-        print(f"MAP ORGANIZER   Ver_0.0.1\n\n{self.GetMapString()}\n\n(C)reate map, (S)ave map, (L)oad map, (D)elete map, (M)apset options, (Q)uit\n")
+    def show_main_menu(self) -> None:
+        print(f"MAP ORGANIZER   Ver_0.0.1\n\n{self.get_map_string()}\n\n(C)reate map, (S)ave map, (L)oad map, (D)elete map, (M)apset options, (Q)uit\n")
 
-    def ShowMapMenu(self) -> None:
+    def show_map_menu(self) -> None:
         pass
 
-    def ShowMapsetMenu(self) -> None:
+    def show_mapset_menu(self) -> None:
         pass
 
-    def ProceedUserOption(self) -> None:
-        userChoice = input().upper()
-        if self._currentInterface == "mainMenu":
-            if userChoice == "C":
+    def proceed_user_option(self) -> None:
+        user_choice = input().upper()
+        if self._current_interface == "mainMenu":
+            if user_choice == "C":
                 identifier = input('Please enter the indentifier of the new map, enter "Cancel" to cancel: ')
                 name = input('Please enter the name of the new map, enter "Cancel" to cancel: ')
                 while True:
                     try:
-                        xSize = int(input('Please enter the x-Size of the new map in integer, enter "Cancel" to cancel: '))
-                        ySize = int(input('Please enter the y-size of the new map in integer, enter "Cancel" to cancel: '))
+                        x_size = int(input('Please enter the x-Size of the new map in integer, enter "Cancel" to cancel: '))
+                        y_size = int(input('Please enter the y-size of the new map in integer, enter "Cancel" to cancel: '))
                         break
-                    except ValueError: print("Invalid value, please try again.")
+                    except ValueError:
+                        print("Invalid value, please try again.")
                 while True:
                     try:
                         distance = float(input('Please enter the distance between two "blocks" for the new map in number of unit, enter "Cancel" to cancel: '))
                         break
-                    except ValueError: print("Invalid value, please try again.")
-                self.CreateCartesianMap(identifier, name, xSize, ySize, distance)
-            elif userChoice == "S":
-                os.makedirs("mapSave", exist_ok = True)
+                    except ValueError:
+                        print("Invalid value, please try again.")
+                self.create_cartesian_map(identifier, name, x_size, y_size, distance)
+            elif user_choice == "S":
+                os.makedirs("mapSave", exist_ok=True)
                 while True:
                     try:
-                        targetMapIdentifier = input("Please enter the identifier of the map you want to save: ")
-                        targetMap = self._mapDict[targetMapIdentifier]
+                        target_map_identifier = input("Please enter the identifier of the map you want to save: ")
+                        target_map = self._map_dict[target_map_identifier]
                         break
-                    except KeyError: print("Identifier doesn't exist, please try again.")
-                mapSaveName = input("Please enter the name of the file you want to save to: ")
-                if os.path.isfile(f"mapSave/{mapSaveName}.map"):
-                    if not(input("A file with the same name already exists, proceed to overwrite? (y/n): ").upper() == "Y"): return
-                with open(f"mapSave/{mapSaveName}.map", "w", encoding = "utf-8") as currentSaveFile:
-                    currentSaveFile.write(f"{targetMapIdentifier}\n")
-                    currentSaveFile.write(f"{targetMap.GetName()}\n")
-                    currentSaveFile.write(f"{targetMap.GetXSize()} {targetMap.GetYSize()}\n")
-                    currentSaveFile.write(f"{targetMap.GetCoordinateDistance()}\n")
-                    currentSaveFile.write(f"{targetMap.GetMaxDigit()}\n")
-                    for locationIndex in range(len(targetMap.GetLocationList())):
-                        print(f"\nstr(targetMap.GetLocationList()[locationIndex]): {str(targetMap.GetLocationList()[locationIndex])}\ntargetMap.GetLocationList()[locationIndex].GetLevel().GetLocalization(): {targetMap.GetLocationList()[locationIndex].GetLevel().GetLocalization()}\n")
-                        currentSaveFile.write(f"{str(targetMap.GetLocationList()[locationIndex])} {targetMap.GetLocationList()[locationIndex].GetLevel().GetLocalization()}\n")
-                    # TBD
-            elif userChoice == "L":
+                    except KeyError:
+                        print("Identifier doesn't exist, please try again.")
+                map_save_name = input("Please enter the name of the file you want to save to: ")
+                if os.path.isfile(f"mapSave/{map_save_name}.map"):
+                    if not input("A file with the same name already exists, proceed to overwrite? (y/n): ").upper() == "Y":
+                        return
+                with open(f"mapSave/{map_save_name}.map", "w", encoding="utf-8") as current_save_file:
+                    current_save_file.write(f"{target_map_identifier}\n")
+                    current_save_file.write(f"{target_map.get_name()}\n")
+                    current_save_file.write(f"{target_map.get_xsize()} {target_map.get_ysize()}\n")
+                    current_save_file.write(f"{target_map.get_coordinate_distance()}\n")
+                    current_save_file.write(f"{target_map.get_max_digit()}\n")
+                    for location_index in range(len(target_map.get_location_list())):
+                        print(f"\nstr(targetMap.GetLocationList()[locationIndex]): {str(target_map.get_location_list()[location_index])}\ntargetMap.GetLocationList()[location_index].GetLevel().GetLocalization(): {target_map.get_location_list()[location_index].get_level().get_localization()}\n")
+                        current_save_file.write(f"{str(target_map.get_location_list()[location_index])} {target_map.get_location_list()[location_index].get_level().get_localization()}\n")
+            elif user_choice == "L":
                 pass
-            elif userChoice == "D":
+            elif user_choice == "D":
                 pass
-            elif userChoice == "M":
+            elif user_choice == "M":
                 pass
-            elif userChoice == "Q":
+            elif user_choice == "Q":
                 pass
-        elif self._currentInterface == "mapMenu":
+        elif self._current_interface == "mapMenu":
             pass
-        elif self._currentInterface == "mapsetMenu":
+        elif self._current_interface == "mapsetMenu":
             pass
 
-    def CreateCartesianMap(self, identifier: str, name: str, xSize: int, ySize: int, distance: int | float) -> None:
-        self._mapDict[identifier] = CartesianMap(name, xSize, ySize, distance)
+    def create_cartesian_map(self, identifier: str, name: str, x_size: int, y_size: int, distance: int | float) -> None:
+        self._map_dict[identifier] = CartesianMap(name, x_size, y_size, distance)
 
-    def RemoveMap(self, identifier: str) -> TravelMap | CartesianMap:
-        return self._mapDict.pop(identifier)
+    def remove_map(self, identifier: str) -> "TravelMap | CartesianMap":
+        return self._map_dict.pop(identifier)
 
-    def SaveMap(self) -> None:
+    def save_map(self) -> None:
         pass
 
-    def LoadMap(self) -> None:
+    def load_map(self) -> None:
         pass
 
-    def saveMapset(self) -> None:
+    def save_mapset(self) -> None:
         pass
 
-    def LoadMapset(self) -> bool:
+    def load_mapset(self) -> bool:
         pass
 
-    def GetMapString(self) -> str:
-        if len(self._mapDict) == 0: return "There isn't any map yet.\nConsider create or load one?"
-        mapStringList = []
-        maxMapNameLength = 8 # Length of string "Map Name"
-        maxIdentifierLength = 10 # Length of string "Identifier"
-        for map in self._mapDict:
-            if len(self._mapDict[map].GetName()) > maxMapNameLength: maxMapNameLength = len(self._mapDict[map].GetName())
-        for identifier in self._mapDict:
-            if len(identifier) > maxIdentifierLength: maxIdentifierLength = len(identifier)
-        for map in self._mapDict:
-            mapStringList.append(f"{f"{map}":<{maxIdentifierLength}} | {f"{self._mapDict[map].GetName()}":<{maxMapNameLength}}")
-        mapStringList.insert(0, f"{"Identifier":<{maxIdentifierLength}} | {"Map Name":<{maxMapNameLength}}\n")
-        return "\n".join(mapStringList)
+    def get_map_string(self) -> str:
+        if len(self._map_dict) == 0:
+            return "There isn't any map yet.\nConsider create or load one?"
+        map_string_list: List[str] = []
+        max_map_name_length = 8
+        max_identifier_length = 10
+        for map_key in self._map_dict:
+            if len(self._map_dict[map_key].get_name()) > max_map_name_length:
+                max_map_name_length = len(self._map_dict[map_key].get_name())
+        for identifier in self._map_dict:
+            if len(identifier) > max_identifier_length:
+                max_identifier_length = len(identifier)
+        for map_key in self._map_dict:
+            map_string_list.append(f"{f'{map_key}':<{max_identifier_length}} | {f'{self._map_dict[map_key].get_name()}':<{max_map_name_length}}")
+        map_string_list.insert(0, f"{'Identifier':<{max_identifier_length}} | {'Map Name':<{max_map_name_length}}\n")
+        return "\n".join(map_string_list)
 
 class Person:
-
     def __init__(self, position: int, name: str, symbol: str) -> None:
-        self._position = position
-        self._name = name
-        self._symbol = symbol
+        self._position: int = position
+        self._name: str = name
+        self._symbol: str = symbol
 
-    def GetName(self) -> str:
+    def get_name(self) -> str:
         return self._name
     
-    def GetSymbol(self) -> str:
+    def get_symbol(self) -> str:
         return self._symbol
     
-    def GetPosition(self) -> int:
+    def get_position(self) -> int:
         return self._position
     
-    def moveTo(self, position) -> int:
+    def move_to(self, position: int) -> int:
         self._position = position
         return self._position
 
 class TravelMap:
-
     def __init__(self, name: str) -> None:
-        self._name = name
-        self._maxDigit = -1
-        self._locationList: Location = []
+        self._name: str = name
+        self._max_digit: int = -1
+        self._location_list: List["Location"] = []
     
-    def GetName(self) -> str:
+    def get_name(self) -> str:
         return self._name
     
-    def GetNumberOfLocation(self) -> int:
-        return len(self._locationList)
+    def get_number_of_location(self) -> int:
+        return len(self._location_list)
     
-    def GetLocation(self, index: int) -> Location:
-        return self._locationList[index]
+    def get_location(self, index: int) -> "Location":
+        return self._location_list[index]
     
-    def GetLocationList(self) -> list:
-        return self._locationList
+    def get_location_list(self) -> List["Location"]:
+        return self._location_list
     
-    def AddLocation(self, name: str = "Default", levelIdentifier: str = "NML") -> int: # Add a "Location" onto the map
+    def add_location(self, name: str = "Default", level_identifier: str = "NML") -> int:
         if name == "Default":
-            name = f"Location{self.GetNumberOfLocation()}"
-        self._locationList.append(Location(name, levelIdentifier))
-        return (self.GetNumberOfLocation() - 1)
+            name = f"Location{self.get_number_of_location()}"
+        self._location_list.append(Location(name, level_identifier))
+        return self.get_number_of_location() - 1
     
-    def LinkLocation(self, locationIndex0: int, locationIndex1: int, distance: float) -> None: # Connect two "Locations"
-        self.GetLocation(locationIndex0).AddRoute(self.GetLocation(locationIndex1), distance)
+    def link_location(self, location_index0: int, location_index1: int, distance: float) -> None:
+        self.get_location(location_index0).add_route(self.get_location(location_index1), distance)
     
-    def SetLevel(self, index: int, levelIdentifier: str) -> None:
-        self.GetLocation(index).UpdateLevel(levelIdentifier)
+    def set_level(self, index: int, level_identifier: str) -> None:
+        self.get_location(index).update_level(level_identifier)
     
-    def Navigate(self, locationIndex0: int, locationIndex1: int) -> list: # Find out the distance between two "Locations", return the distance and the route(with all "Locations in between")
-        distances = [float('inf')] * self.GetNumberOfLocation()
-        predecessors = [None] * self.GetNumberOfLocation()
-        distances[locationIndex0] = 0
-        visited = [False] * self.GetNumberOfLocation()
+    def navigate(self, location_index0: int, location_index1: int) -> List[Any]:
+        distances = [float('inf')] * self.get_number_of_location()
+        predecessors = [None] * self.get_number_of_location()
+        distances[location_index0] = 0
+        visited = [False] * self.get_number_of_location()
 
-        for i in range(self.GetNumberOfLocation()):
-            minDistance = float('inf')
+        for _ in range(self.get_number_of_location()):
+            min_distance = float('inf')
             u = None
-            for index in range(self.GetNumberOfLocation()):
-                if not(visited[index]) and (distances[index] < minDistance):
-                    minDistance = distances[index]
+            for index in range(self.get_number_of_location()):
+                if not visited[index] and distances[index] < min_distance:
+                    min_distance = distances[index]
                     u = index
-            if (u is None) or (u == locationIndex1):
+            if u is None or u == location_index1:
                 break
             visited[u] = True
-            for v in range(self.GetNumberOfLocation()):
-                if (self.GetLocation(u).CheckRoute(self.GetLocation(v)) != None) and not(visited[v]):
-                    alt = distances[u] + self.GetLocation(u).CheckRoute(self.GetLocation(v))
+            for v in range(self.get_number_of_location()):
+                route = self.get_location(u).check_route(self.get_location(v))
+                if route is not None and not visited[v]:
+                    alt = distances[u] + route
                     if alt < distances[v]:
                         distances[v] = alt
                         predecessors[v] = u
         
-        path = []
-        pathID = []
-        current = locationIndex1
+        path: List[str] = []
+        path_id: List[int] = []
+        current = location_index1
         while current is not None:
-            path.insert(0, str(self.GetLocation(current)))
-            pathID.insert(0, current)
+            path.insert(0, str(self.get_location(current)))
+            path_id.insert(0, current)
             current = predecessors[current]
-            if current == locationIndex0:
-                path.insert(0, str(self.GetLocation(locationIndex0)))
-                pathID.insert(0, locationIndex0)
+            if current == location_index0:
+                path.insert(0, str(self.get_location(location_index0)))
+                path_id.insert(0, location_index0)
                 break
-        path = " — ".join(path)
+        path_str = " — ".join(path)
 
-        return [distances[locationIndex1], path, pathID]
+        return [distances[location_index1], path_str, path_id]
 
 class CartesianMap(TravelMap):
-
-    def __init__(self, name: str, xSize: int, ySize: int, distance: int | float) -> None:
+    def __init__(self, name: str, x_size: int, y_size: int, distance: int | float) -> None:
         super().__init__(name)
-        self._xSize = xSize
-        self._ySize = ySize
-        self._coordinateDistance = distance
-        self._coordinateList = []
-        self._personDict = {}
-        for x in range(self._xSize):
-            xLocationList = []
-            for y in range(self._ySize):
-                xLocationList.append(self.GetNumberOfLocation())
-                self.AddLocation(f"[{self.GetNumberOfLocation()}]: {x}, {y}", "GND")
-            self._coordinateList.append(xLocationList)
-        self._maxDigit = 1
-        for x in range(self._xSize):
-            for y in range(self._ySize):
-                if len(str(self._coordinateList[x][y])) > self._maxDigit:
-                    self._maxDigit = len(str(self._coordinateList[x][y]))
-        self.UpdateLink()
+        self._x_size: int = x_size
+        self._y_size: int = y_size
+        self._coordinate_distance: int | float = distance
+        self._coordinate_list: List[List[int]] = []
+        self._person_dict: Dict[int, Person] = {}
+        for x in range(self._x_size):
+            x_location_list: List[int] = []
+            for y in range(self._y_size):
+                x_location_list.append(self.get_number_of_location())
+                self.add_location(f"[{self.get_number_of_location()}]: {x}, {y}", "GND")
+            self._coordinate_list.append(x_location_list)
+        self._max_digit = 1
+        for x in range(self._x_size):
+            for y in range(self._y_size):
+                if len(str(self._coordinate_list[x][y])) > self._max_digit:
+                    self._max_digit = len(str(self._coordinate_list[x][y]))
+        self.update_link()
     
-    def GetXSize(self) -> int:
-        return self._xSize
+    def get_xsize(self) -> int:
+        return self._x_size
     
-    def GetYSize(self) -> int:
-        return self._ySize
+    def get_ysize(self) -> int:
+        return self._y_size
 
-    def GetCoordinateDistance(self) -> int | float:
-        return self._coordinateDistance
+    def get_coordinate_distance(self) -> int | float:
+        return self._coordinate_distance
 
-    def GetMaxDigit(self) -> int:
-        return self._maxDigit
+    def get_max_digit(self) -> int:
+        return self._max_digit
 
-    def UpdateLink(self) -> None:
-        # Clear all routes between all Locations
-        for x in range(self._xSize):
-            for y in range(self._ySize):
-                self.GetLocation(self._coordinateList[x][y]).ClearLocalRoute()
-        # Links every Location with the 8 other Locations around it
-        for x in range(self._xSize):
-            for y in range(self._ySize):
+    def update_link(self) -> None:
+        for x in range(self._x_size):
+            for y in range(self._y_size):
+                self.get_location(self._coordinate_list[x][y]).clear_local_route()
+        for x in range(self._x_size):
+            for y in range(self._y_size):
                 if x != 0:
-                    try: # Left of this Location
-                        if self.GetLocation(self._coordinateList[x][y]).CheckRoute(self.GetLocation(self._coordinateList[x - 1][y])) == None:
-                            self.LinkLocation(self._coordinateList[x][y], self._coordinateList[x - 1][y], self._coordinateDistance)
+                    try:
+                        if self.get_location(self._coordinate_list[x][y]).check_route(self.get_location(self._coordinate_list[x - 1][y])) is None:
+                            self.link_location(self._coordinate_list[x][y], self._coordinate_list[x - 1][y], self._coordinate_distance)
                     except IndexError:
                         print(f"Coordinate {x}, {y} has index out of range, skip\n")
-                    try: # Top left of this Location
-                        if self.GetLocation(self._coordinateList[x][y]).CheckRoute(self.GetLocation(self._coordinateList[x - 1][y + 1])) == None:
-                            self.LinkLocation(self._coordinateList[x][y], self._coordinateList[x - 1][y + 1], sqrt(2 * (self._coordinateDistance ** 2)))
+                    try:
+                        if self.get_location(self._coordinate_list[x][y]).check_route(self.get_location(self._coordinate_list[x - 1][y + 1])) is None:
+                            self.link_location(self._coordinate_list[x][y], self._coordinate_list[x - 1][y + 1], sqrt(2 * (self._coordinate_distance ** 2)))
                     except IndexError:
                         print(f"Coordinate {x}, {y} has index out of range, skip\n")
                 if y != 0:
-                    try: # Bottom of this Location
-                        if self.GetLocation(self._coordinateList[x][y]).CheckRoute(self.GetLocation(self._coordinateList[x][y - 1])) == None:
-                            self.LinkLocation(self._coordinateList[x][y], self._coordinateList[x][y - 1], self._coordinateDistance)
+                    try:
+                        if self.get_location(self._coordinate_list[x][y]).check_route(self.get_location(self._coordinate_list[x][y - 1])) is None:
+                            self.link_location(self._coordinate_list[x][y], self._coordinate_list[x][y - 1], self._coordinate_distance)
                     except IndexError:
                         print(f"Coordinate {x}, {y} has index out of range, skip\n")
-                    try: # Bottom right of this Location
-                        if self.GetLocation(self._coordinateList[x][y]).CheckRoute(self.GetLocation(self._coordinateList[x + 1][y - 1])) == None:
-                            self.LinkLocation(self._coordinateList[x][y], self._coordinateList[x + 1][y - 1], sqrt(2 * (self._coordinateDistance ** 2)))
+                    try:
+                        if self.get_location(self._coordinate_list[x][y]).check_route(self.get_location(self._coordinate_list[x + 1][y - 1])) is None:
+                            self.link_location(self._coordinate_list[x][y], self._coordinate_list[x + 1][y - 1], sqrt(2 * (self._coordinate_distance ** 2)))
                     except IndexError:
                         print(f"Coordinate {x}, {y} has index out of range, skip\n")
                 if x != 0 and y != 0:
-                    try: # Bottom left of this Location
-                        if self.GetLocation(self._coordinateList[x][y]).CheckRoute(self.GetLocation(self._coordinateList[x - 1][y - 1])) == None:
-                            self.LinkLocation(self._coordinateList[x][y], self._coordinateList[x - 1][y - 1], sqrt(2 * (self._coordinateDistance ** 2)))
+                    try:
+                        if self.get_location(self._coordinate_list[x][y]).check_route(self.get_location(self._coordinate_list[x - 1][y - 1])) is None:
+                            self.link_location(self._coordinate_list[x][y], self._coordinate_list[x - 1][y - 1], sqrt(2 * (self._coordinate_distance ** 2)))
                     except IndexError:
                         print(f"Coordinate {x}, {y} has index out of range, skip\n")
-                try: # Top right of this Location
-                    if self.GetLocation(self._coordinateList[x][y]).CheckRoute(self.GetLocation(self._coordinateList[x + 1][y + 1])) == None:
-                        self.LinkLocation(self._coordinateList[x][y], self._coordinateList[x + 1][y + 1], sqrt(2 * (self._coordinateDistance ** 2)))
+                try:
+                    if self.get_location(self._coordinate_list[x][y]).check_route(self.get_location(self._coordinate_list[x + 1][y + 1])) is None:
+                        self.link_location(self._coordinate_list[x][y], self._coordinate_list[x + 1][y + 1], sqrt(2 * (self._coordinate_distance ** 2)))
                 except IndexError:
                     print(f"Coordinate {x}, {y} has index out of range, skip\n")
-                try: # Right of this Location
-                    if self.GetLocation(self._coordinateList[x][y]).CheckRoute(self.GetLocation(self._coordinateList[x + 1][y])) == None:
-                        self.LinkLocation(self._coordinateList[x][y], self._coordinateList[x + 1][y], self._coordinateDistance)
+                try:
+                    if self.get_location(self._coordinate_list[x][y]).check_route(self.get_location(self._coordinate_list[x + 1][y])) is None:
+                        self.link_location(self._coordinate_list[x][y], self._coordinate_list[x + 1][y], self._coordinate_distance)
                 except IndexError:
                     print(f"Coordinate {x}, {y} has index out of range, skip\n")
-                try: # Top of this Location
-                    if self.GetLocation(self._coordinateList[x][y]).CheckRoute(self.GetLocation(self._coordinateList[x][y + 1])) == None:
-                        self.LinkLocation(self._coordinateList[x][y], self._coordinateList[x][y + 1], self._coordinateDistance)
+                try:
+                    if self.get_location(self._coordinate_list[x][y]).check_route(self.get_location(self._coordinate_list[x][y + 1])) is None:
+                        self.link_location(self._coordinate_list[x][y], self._coordinate_list[x][y + 1], self._coordinate_distance)
                 except IndexError:
                     print(f"Coordinate {x}, {y} has index out of range, skip\n")
     
-    def GetCoordString(self) -> str:
-        mapStringList = []
-        seperatorH = "—" * (self._maxDigit + 2)
-        seperatorV = "|"
-        seperatorC = "|"
-        for y in range(self._ySize):
-            lineList = []
-            for x in range(self._xSize):
-                lineList.append(f"{f"{self._coordinateList[x][y]}":^{self._maxDigit + 2}}")
-            mapStringList.insert(0, f"{seperatorV}".join(lineList))
-        return f"\n{f"{seperatorH}{seperatorC}" * (self._xSize - 1)}{seperatorH}\n".join(mapStringList)
+    def get_coord_string(self) -> str:
+        map_string_list: List[str] = []
+        separator_h = "—" * (self._max_digit + 2)
+        separator_v = "|"
+        separator_c = "|"
+        for y in range(self._y_size):
+            line_list: List[str] = []
+            for x in range(self._x_size):
+                line_list.append(f"{f'{self._coordinate_list[x][y]}':^{self._max_digit + 2}}")
+            map_string_list.insert(0, separator_v.join(line_list))
+        return f"\n{f'{separator_h}{separator_c}' * (self._x_size - 1)}{separator_h}\n".join(map_string_list)
     
-    def GetLocString(self) -> str:
-        mapStringList = []
-        seperatorH = "—" * (self._maxDigit + 2)
-        seperatorV = "|"
-        seperatorC = "|"
-        for y in range(self._ySize):
-            lineList = []
-            for x in range(self._xSize):
-                lineList.append(f"{f"{self.GetLocation(self._coordinateList[x][y]).GetLevel().GetLocalization()}":^{self._maxDigit + 2}}")
-            mapStringList.insert(0, f"{seperatorV}".join(lineList))
-        return f"\n{f"{seperatorH}{seperatorC}" * (self._xSize - 1)}{seperatorH}\n".join(mapStringList)
+    def get_loc_string(self) -> str:
+        map_string_list: List[str] = []
+        separator_h = "—" * (self._max_digit + 2)
+        separator_v = "|"
+        separator_c = "|"
+        for y in range(self._y_size):
+            line_list: List[str] = []
+            for x in range(self._x_size):
+                line_list.append(f"{f'{self.get_location(self._coordinate_list[x][y]).get_level().get_localization()}':^{self._max_digit + 2}}")
+            map_string_list.insert(0, separator_v.join(line_list))
+        return f"\n{f'{separator_h}{separator_c}' * (self._x_size - 1)}{separator_h}\n".join(map_string_list)
     
-    def GetPersonString(self) -> str:
-        mapStringList = []
-        seperatorH = "—" * (self._maxDigit + 2)
-        seperatorV = "|"
-        seperatorC = "|"
-        for y in range(self._ySize):
-            lineList = []
-            for x in range(self._xSize):
-                lineList.append(f"{f"{self.GetPerson(self._coordinateList[x][y]).GetSymbol()}":^{self._maxDigit + 2}}")
-            mapStringList.insert(0, f"{seperatorV}".join(lineList))
-        return f"\n{f"{seperatorH}{seperatorC}" * (self._xSize - 1)}{seperatorH}\n".join(mapStringList)
+    def get_person_string(self) -> str:
+        map_string_list: List[str] = []
+        separator_h = "—" * (self._max_digit + 2)
+        separator_v = "|"
+        separator_c = "|"
+        for y in range(self._y_size):
+            line_list: List[str] = []
+            for x in range(self._x_size):
+                line_list.append(f"{f'{self.get_person(self._coordinate_list[x][y]).get_symbol()}':^{self._max_digit + 2}}")
+            map_string_list.insert(0, separator_v.join(line_list))
+        return f"\n{f'{separator_h}{separator_c}' * (self._x_size - 1)}{separator_h}\n".join(map_string_list)
     
-    def LinkLocation(self, locationIndex0: int, locationIndex1: int, distance: float) -> None:
-        if self.GetLocation(locationIndex0).GetLevel().GetLocalization() != "▓" and self.GetLocation(locationIndex1).GetLevel().GetLocalization() != "▓":
-            if self.GetLocation(locationIndex0).GetLevel().GetLocalization() == "▒" or self.GetLocation(locationIndex1).GetLevel().GetLocalization() == "▒":
-                self.GetLocation(locationIndex0).AddRoute(self.GetLocation(locationIndex1), distance * 1.5)
+    def link_location(self, location_index0: int, location_index1: int, distance: float) -> None:
+        if (self.get_location(location_index0).get_level().get_localization() != "▓" and
+            self.get_location(location_index1).get_level().get_localization() != "▓"):
+            if (self.get_location(location_index0).get_level().get_localization() == "▒" or
+                self.get_location(location_index1).get_level().get_localization() == "▒"):
+                self.get_location(location_index0).add_route(self.get_location(location_index1), distance * 1.5)
             else:
-                self.GetLocation(locationIndex0).AddRoute(self.GetLocation(locationIndex1), distance)
+                self.get_location(location_index0).add_route(self.get_location(location_index1), distance)
         else:
-            self.GetLocation(locationIndex0).AddRoute(self.GetLocation(locationIndex1), float('inf'))
+            self.get_location(location_index0).add_route(self.get_location(location_index1), float('inf'))
     
-    def SetLevel(self, index: int, levelIdentifier: str) -> None:
-        super().SetLevel(index, levelIdentifier)
-        self.UpdateLink()
+    def set_level(self, index: int, level_identifier: str) -> None:
+        super().set_level(index, level_identifier)
+        self.update_link()
 
-    def AddPerson(self, position: int, name: str, symbol: str):
-        self._personDict[position] = Person(position, name, symbol)
-        #print(self._personDict)
+    def add_person(self, position: int, name: str, symbol: str) -> None:
+        self._person_dict[position] = Person(position, name, symbol)
     
-    def GetNumberOfPerson(self) -> int:
-        return len(self._personDict)
+    def get_number_of_person(self) -> int:
+        return len(self._person_dict)
     
-    def GetPerson(self, coordIndex: int) -> Person:
-        if coordIndex in self._personDict:
-            return self._personDict[coordIndex]
-        else:
-            return Person(-1, "Null", "")
+    def get_person(self, coord_index: int) -> Person:
+        if coord_index in self._person_dict:
+            return self._person_dict[coord_index]
+        return Person(-1, "Null", "")
     
-    def MovePerson(self, personCoordIndex: int, destCoordIndex: int):
-        self._personDict[self.GetPerson(personCoordIndex).moveTo(destCoordIndex)] = self.GetPerson(personCoordIndex)
-        del self._personDict[personCoordIndex]
+    def move_person(self, person_coord_index: int, dest_coord_index: int) -> None:
+        person = self.get_person(person_coord_index)
+        self._person_dict[person.move_to(dest_coord_index)] = person
+        del self._person_dict[person_coord_index]
 
 class Location(Node):
-
-    def __init__(self, name: str, levelIdentifier: str) -> None:
+    def __init__(self, name: str, level_identifier: str) -> None:
         super().__init__(name)
-        self._level = locationLevels[levelIdentifier]
+        self._level: LocationLevel = locationLevels[level_identifier]
 
-    def GetLevel(self) -> LocationLevel:
+    def get_level(self) -> LocationLevel:
         return self._level
     
-    def AddRoute(self, node: Location, distance: float) -> None:
+    def add_route(self, node: "Location", distance: float) -> None:
         self.links[node] = distance
         node.links[self] = distance
     
-    def ClearLocalRoute(self) -> None:
+    def clear_local_route(self) -> None:
         self.links = {}
 
-    def CheckRoute(self, node: Location) -> float:
-        return self.links.get(node, None)
+    def check_route(self, node: "Location") -> float | None:
+        return self.links.get(node)
     
-    def UpdateLevel(self, levelIdentifier: str) -> None:
-        self._level = locationLevels[levelIdentifier]
+    def update_level(self, level_identifier: str) -> None:
+        self._level = locationLevels[level_identifier]
 
-# FUNCTIONS
-
-def Main():
-    mainInterface = Interface()
-
-# MAIN
-
-#Main()
-
-# TEST
+def main() -> None:
+    main_interface = Interface()
 
 if __name__ == "__main__":
-    """testMap = TravelMap("Abingdon School")
-    testMap.AddLocation("Amey Theatre") # 0
-    testMap.AddLocation("Big School") # 1
-    testMap.AddLocation("Crescent House") # 2
-    testMap.AddLocation("DT Department") # 3
-    testMap.AddLocation("Economics Classroom") # 4
-    testMap.AddLocation("Faringdon Lodge") # 5
-    testMap.AddLocation("Greening Court") # 6
-    testMap.LinkLocation(0, 1, 2)
-    testMap.LinkLocation(0, 3, 3)
-    testMap.LinkLocation(3, 6, 1)
-    testMap.LinkLocation(4, 5, 1)
-    testMap.LinkLocation(1, 4, 4)
-    testMap.LinkLocation(1, 5, 3)
-    testMap.LinkLocation(2, 5, 2.5)
-    navigationResult = testMap.Navigate(3, 5)
-    print(f'In map "{testMap.GetName()}", such route exists:\nRoute Length: {round(navigationResult[0], 2)}\nRoute Detail: {navigationResult[1]}')"""
+    """test_map = TravelMap("Abingdon School")
+    test_map.add_location("Amey Theatre")  # 0
+    test_map.add_location("Big School")  # 1
+    test_map.add_location("Crescent House")  # 2
+    test_map.add_location("DT Department")  # 3
+    test_map.add_location("Economics Classroom")  # 4
+    test_map.add_location("Faringdon Lodge")  # 5
+    test_map.add_location("Greening Court")  # 6
+    test_map.link_location(0, 1, 2)
+    test_map.link_location(0, 3, 3)
+    test_map.link_location(3, 6, 1)
+    test_map.link_location(4, 5, 1)
+    test_map.link_location(1, 4, 4)
+    test_map.link_location(1, 5, 3)
+    test_map.link_location(2, 5, 2.5)
+    navigation_result = test_map.navigate(3, 5)
+    print(f'In map "{test_map.get_name()}", such route exists:\nRoute Length: {round(navigation_result[0], 2)}\nRoute Detail: {navigation_result[1]}')"""
 
-    testMap = CartesianMap("CMap", 7, 3, 1)
-    testMap.SetLevel(6, "WAL")
-    testMap.SetLevel(7, "WAL")
-    testMap.SetLevel(8, "COV")
-    testMap.SetLevel(11, "COV")
-    startCoordinate = 1
-    endCoordinate = 19
-    testMap.AddPerson(startCoordinate, "PLACEHOLDER", "P")
-    navigationResult = testMap.Navigate(startCoordinate, endCoordinate)
-    print(f'In map "{testMap.GetName()}", such route exists:\nRoute Length: {round(navigationResult[0], 2)}\nRoute Detail: {navigationResult[1]}')
-    print(f"Raw PathID: {navigationResult[2]}")
-    print(f"\n{testMap.GetCoordString()}\n")
-    print(f"\n{testMap.GetLocString()}\n")
-    print(f"Move From:\n{testMap.GetPersonString()}\n")
-    testMap.MovePerson(startCoordinate, endCoordinate)
-    print(f"To:\n{testMap.GetPersonString()}\n")
+    test_map = CartesianMap("CMap", 7, 3, 1)
+    test_map.set_level(6, "WAL")
+    test_map.set_level(7, "WAL")
+    test_map.set_level(8, "COV")
+    test_map.set_level(11, "COV")
+    start_coordinate = 1
+    end_coordinate = 19
+    test_map.add_person(start_coordinate, "PLACEHOLDER", "P")
+    navigation_result = test_map.navigate(start_coordinate, end_coordinate)
+    print(f'In map "{test_map.get_name()}", such route exists:\nRoute Length: {round(navigation_result[0], 2)}\nRoute Detail: {navigation_result[1]}')
+    print(f"Raw PathID: {navigation_result[2]}")
+    print(f"\n{test_map.get_coord_string()}\n")
+    print(f"\n{test_map.get_loc_string()}\n")
+    print(f"Move From:\n{test_map.get_person_string()}\n")
+    test_map.move_person(start_coordinate, end_coordinate)
+    print(f"To:\n{test_map.get_person_string()}\n")
